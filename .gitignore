@@ -252,3 +252,6 @@ poetry.lock
 /frontend/.env.local
 /frontend/.env.production.local
 .DS_Store
+
+# Local documentation and files not for version control
+local_docs/
