@@ -28,13 +28,20 @@ Welcome to the Axiome algorithm learning platform! We're excited to have you con
    npm install
    ```
 
+3. **Configure git with private email**:
+   ```bash
+   # Use GitHub no-reply email to protect privacy
+   git config user.email "yourusername@users.noreply.github.com"
+   git config user.name "yourusername"
+   ```
+
 ## 📝 Contribution Workflow
 
 ### For Each New Feature/Fix:
-1. **Start from main branch**:
+1. **Start from develop branch**:
    ```bash
-   git checkout main
-   git pull origin main
+   git checkout develop
+   git pull origin develop
    ```
 
 2. **Create feature branch**:
@@ -66,7 +73,39 @@ Welcome to the Axiome algorithm learning platform! We're excited to have you con
    git push origin feature/your-feature-name
    ```
 
-7. **Create Pull Request** through GitHub web interface
+7. **Create Pull Request** to `develop` branch through GitHub web interface
+
+## 🌿 Branch Strategy
+
+### Branch Types
+- **`main`** - Production-ready code, protected
+- **`develop`** - Integration branch for features, protected  
+- **`feature/description`** - New features (`feature/user-authentication`)
+- **`fix/description`** - Bug fixes (`fix/login-validation`)
+- **`docs/description`** - Documentation updates
+- **`chore/description`** - Maintenance tasks
+
+### Workflow Rules
+1. **No direct commits to `main` or `develop`**
+2. **All features start from `develop`**
+3. **All PRs must target `develop` (except hotfixes)**
+4. **Only `develop` can be merged to `main`**
+5. **Use descriptive branch names**: `feature/binary-search-visualization`
+
+### Example Workflow:
+```bash
+# Start new feature
+git checkout develop
+git pull origin develop  
+git checkout -b feature/algorithm-timer
+
+# Work on feature, then create PR to develop
+git push origin feature/algorithm-timer
+# Create PR: feature/algorithm-timer → develop
+
+# Release to production  
+# Create PR: develop → main (maintainer only)
+```
 
 ### 📋 Pull Request Requirements
 - [ ] **CLA signed** (required - bot will guide you)
@@ -106,6 +145,34 @@ Axiome/
 ├── .github/            # GitHub workflows and templates
 └── README.md          # Project overview
 ```
+
+## 📧 Email Privacy
+
+To protect contributor privacy, all commits must use GitHub's no-reply email addresses:
+
+### Required Setup
+```bash
+# Configure git with GitHub no-reply email
+git config user.email "yourusername@users.noreply.github.com"
+git config user.name "yourusername"
+
+# Verify configuration
+git config --list | grep user
+```
+
+### Privacy Guidelines
+- **Never commit with personal email addresses**
+- **Use format**: `username@users.noreply.github.com`
+- **Enable GitHub privacy**: Go to [GitHub Email Settings](https://github.com/settings/emails)
+  - ✅ Check "Keep my email addresses private"
+  - ✅ Check "Block command line pushes that expose my email"
+
+### Finding Your No-Reply Email
+1. Visit: https://github.com/settings/emails
+2. Look for: `[ID]+[username]@users.noreply.github.com`
+3. Or use simple format: `username@users.noreply.github.com`
+
+**Note**: Commits with exposed personal emails will be rejected by our CI/CD pipeline.
 
 ## 📦 Dependency Management
 
@@ -191,12 +258,12 @@ npm run lint
 
 ```bash
 # Development workflow
-git checkout main && git pull origin main
+git checkout develop && git pull origin develop
 git checkout -b feature/my-feature
 # ... make changes ...
 git add . && git commit -m "Clear description"
 git push origin feature/my-feature
-# Create PR through GitHub
+# Create PR to develop through GitHub
 
 # Testing
 cd backend && uv run pytest
