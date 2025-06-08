@@ -5,21 +5,29 @@ on:
   pull_request_target:
     types: [opened, closed, synchronize]
 
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  statuses: write
+
 jobs:
   CLAssistant:
     runs-on: ubuntu-latest
     steps:
       - name: "CLA Assistant"
         if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
-        uses: contributor-assistant/github-action@v2.3.0
+        uses: contributor-assistant/github-action@v2.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           path-to-signatures: 'signatures/version1/cla.json'
           path-to-document: 'https://github.com/samiksha-xyz/Axiome/blob/main/docs/CLA.md'
-          branch: 'main'
-          allowlist: dependabot[bot],github-actions[bot]
+          branch: 'cla-signatures'
+          allowlist: suh4s,suhas,dependabot[bot],github-actions[bot]
           remote-organization-name: 'samiksha-xyz'
           remote-repository-name: 'Axiome'
           lock-pullrequest-aftermerge: false
+          empty-commit-flag: false
+          blockchain-storage-flag: false
