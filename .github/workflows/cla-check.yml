@@ -29,5 +29,3 @@ jobs:
           remote-organization-name: 'samiksha-xyz'
           remote-repository-name: 'Axiome'
           lock-pullrequest-aftermerge: false
-          empty-commit-flag: false
-          blockchain-storage-flag: false
