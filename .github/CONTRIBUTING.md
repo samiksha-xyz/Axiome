@@ -175,7 +175,7 @@ npm run lint
 - **Ask questions** early - don't struggle in silence
 
 ### Getting Help
-- **Tag @suhas** in PR or issue comments for questions
+- **Tag @suh4s** in PR or issue comments for questions
 - **Check existing issues** for similar problems  
 - **Read documentation** in `docs/` folder
 - **Review recent PRs** to understand code patterns
@@ -212,7 +212,7 @@ cd frontend && npm install
 1. **Create PR** with clear title and description
 2. **CLA bot** checks signature (sign if first contribution)
 3. **Automated tests** run (must pass)
-4. **Maintainer review** (usually @suhas)
+4. **Maintainer review** (usually @suh4s)
 5. **Address feedback** if any
 6. **Merge** after approval and passing checks
 
@@ -228,4 +228,4 @@ cd frontend && npm install
 
 Ready to contribute? Look for issues labeled `good first issue` to get started! 🚀
 
-**Questions?** Open an issue or tag @suhas for help.
+**Questions?** Open an issue or tag @suh4s for help.
