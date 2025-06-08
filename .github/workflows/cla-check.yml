@@ -20,58 +20,10 @@ jobs:
         uses: contributor-assistant/github-action@v2.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # No PERSONAL_ACCESS_TOKEN needed for public repos
         with:
           path-to-signatures: 'signatures/version1/cla.json'
           path-to-document: 'https://github.com/samiksha-xyz/Axiome/blob/main/docs/CLA.md'
-          branch: 'main'
+          branch: 'cla-signatures'  # ← This is the key change!
           allowlist: suh4s,suhas,dependabot[bot]
-
-          # Customize the CLA workflow
           empty-commit-flag: false
           blockchain-storage-flag: false
-          remote-organization-name: samiksha-xyz
-          remote-repository-name: Axiome
-
-          # Custom messages for better UX
-          custom-notsigned-prcomment: >
-            Thank you for your submission! 🎉
-
-
-            Before we can review your pull request, we need you to sign our **Contributor License Agreement (CLA)**.
-
-
-            📋 **How to sign the CLA:**
-
-            1. **Read** the [CLA Document](https://github.com/samiksha-xyz/Axiome/blob/main/docs/CLA.md)
-
-            2. **Reply** to this comment with exactly this text:
-               ```
-               I have read the CLA Document and I hereby sign the CLA
-               ```
-
-            3. **Wait** for the CLA bot to confirm your signature ✅
-
-
-            **Note**: You only need to sign once for all future contributions to this repository.
-
-
-            Questions? Check out our [Contributing Guide](https://github.com/samiksha-xyz/Axiome/blob/main/.github/CONTRIBUTING.md) or tag @suh4s for help!
-
-          custom-pr-sign-comment: >
-            **🎉 CLA Signature Confirmed!**
-
-
-            Thank you @$contributorName for signing the CLA! Your signature has been recorded and this covers all your future contributions to the Axiome project.
-
-
-            The maintainers can now proceed with reviewing your pull request. 🚀
-
-          custom-allsigned-prcomment: >
-            **✅ All Contributors Have Signed the CLA**
-
-
-            All contributors to this pull request have signed the CLA. The legal requirements are satisfied and the review process can proceed.
-
-
-            Thank you for your contribution to Axiome! 🙏
