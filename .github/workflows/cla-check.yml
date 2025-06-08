@@ -7,7 +7,7 @@ on:
 
 permissions:
   actions: write
-  contents: read
+  contents: write
   pull-requests: write
   statuses: write
 
@@ -23,7 +23,7 @@ jobs:
         with:
           path-to-signatures: 'signatures/version1/cla.json'
           path-to-document: 'https://github.com/samiksha-xyz/Axiome/blob/main/docs/CLA.md'
-          branch: 'cla-signatures'  # ← This is the key change!
+          branch: 'main'
           allowlist: suh4s,suhas,dependabot[bot]
           empty-commit-flag: false
           blockchain-storage-flag: false
