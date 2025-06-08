@@ -77,8 +77,9 @@ jobs:
 
     - name: Install dependencies
       run: |
-        uv sync
-        echo "✅ UV environment created successfully"
+        # Install all dependencies including dev extras
+        uv sync --extra dev
+        echo "✅ UV environment with dev dependencies created successfully"
 
     - name: Debug UV environment
       run: |
