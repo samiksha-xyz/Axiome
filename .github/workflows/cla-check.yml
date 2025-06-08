@@ -6,7 +6,7 @@ on:
     types: [opened, closed, synchronize]
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
   statuses: write
   actions: read
@@ -25,7 +25,7 @@ jobs:
           path-to-signatures: 'signatures/version1/cla.json'
           path-to-document: 'https://github.com/samiksha-xyz/Axiome/blob/main/docs/CLA.md'
           branch: 'main'
-          allowlist: dependabot[bot],github-actions[bot]
+          allowlist: dependabot[bot],github-actions[bot],suh4s
           remote-organization-name: 'samiksha-xyz'
           remote-repository-name: 'Axiome'
           lock-pullrequest-aftermerge: false

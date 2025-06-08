@@ -75,26 +75,32 @@ jobs:
     - name: Set up Python ${{ env.PYTHON_VERSION }}
       run: uv python install ${{ env.PYTHON_VERSION }}
 
-    - name: Install dependencies
-      run: uv sync
-
-    - name: Verify installation
+    - name: Install dependencies and verify
       run: |
-        uv run python --version
-        uv run python -c "import pytest; print(f'Pytest version: {pytest.__version__}')"
-        uv run python -c "import ruff; print('Ruff found')" || echo "Ruff not found as module"
+        uv sync
+        echo "✅ Dependencies installed"
+        uv pip list | grep -E "(pytest|ruff|black|mypy)" || echo "Some dev tools may not be visible"
 
-    - name: Run tests with pytest
-      run: uv run python -m pytest --cov=. --cov-report=xml --cov-report=term -v
+    - name: Run tests
+      run: uv run pytest -v --tb=short --cov=. --cov-report=xml --cov-report=term
 
-    - name: Run linting with ruff
-      run: uv run ruff check . || uv run python -m ruff check .
+    - name: Run linting
+      run: uv run ruff check .
 
-    - name: Run formatting check with black
-      run: uv run python -m black . --check
+    - name: Run formatting check
+      run: uv run black . --check
 
-    - name: Run type checking with mypy
-      run: uv run python -m mypy . --ignore-missing-imports || echo "MyPy completed with warnings"
+    - name: Run type checking
+      run: uv run mypy . --ignore-missing-imports || echo "MyPy completed with warnings"
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./backend/coverage.xml
+        flags: backend
+        name: backend-coverage
+        token: ${{ secrets.CODECOV_TOKEN }}
+      continue-on-error: true
 
   # Frontend Tests
   frontend-tests:
