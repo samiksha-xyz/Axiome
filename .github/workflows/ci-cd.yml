@@ -78,6 +78,9 @@ jobs:
     - name: Install dependencies
       run: uv sync
     
+    - name: Run tests with pytest
+      run: uv run pytest --cov=. --cov-report=xml --cov-report=term
+    
     - name: Run linting with ruff
       run: uv run ruff check .
     
@@ -86,17 +89,6 @@ jobs:
     
     - name: Run type checking with mypy
       run: uv run mypy . --ignore-missing-imports
-    
-    - name: Run tests with pytest
-      run: uv run pytest --cov=. --cov-report=xml --cov-report=term
-    
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./backend/coverage.xml
-        flags: backend
-        name: backend-coverage
-        token: ${{ secrets.CODECOV_TOKEN }}
 
   # Frontend Tests
   frontend-tests:
@@ -114,11 +106,19 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        cache-dependency-path: './frontend/package-lock.json'
+    
+    - name: Create package-lock.json if missing
+      run: |
+        if [ ! -f package-lock.json ]; then
+          echo "Creating package-lock.json..."
+          npm install --package-lock-only
+        fi
     
     - name: Install dependencies
       run: npm ci
+    
+    - name: Run tests
+      run: npm run test:ci
     
     - name: Run ESLint
       run: npm run lint
@@ -128,17 +128,6 @@ jobs:
     
     - name: Run type checking
       run: npm run type-check
-    
-    - name: Run tests
-      run: npm run test:ci
-    
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./frontend/coverage/lcov.info
-        flags: frontend
-        name: frontend-coverage
-        token: ${{ secrets.CODECOV_TOKEN }}
 
   # Build & Test Integration
   integration-tests:
@@ -167,12 +156,14 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        cache-dependency-path: './frontend/package-lock.json'
     
     - name: Install frontend dependencies
       working-directory: ./frontend
-      run: npm ci
+      run: |
+        if [ ! -f package-lock.json ]; then
+          npm install --package-lock-only
+        fi
+        npm ci
     
     - name: Build frontend
       working-directory: ./frontend
@@ -181,8 +172,8 @@ jobs:
     - name: Start backend server
       working-directory: ./backend
       run: |
-        uv run python main.py &
-        sleep 10
+        uv run python -m axiome_backend.main &
+        sleep 5
       env:
         ENVIRONMENT: test
     
@@ -212,6 +203,7 @@ jobs:
       uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: 'trivy-results.sarif'
+      continue-on-error: true  # Don't fail on upload issues
 
   # Deployment (only on main branch)
   deploy:
