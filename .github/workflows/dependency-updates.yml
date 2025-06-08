@@ -1,0 +1,67 @@
+name: Dependency Updates
+
+on:
+  schedule:
+    - cron: '0 2 * * 1' # Run every Monday at 2 AM UTC
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-python-deps:
+    name: Update Python Dependencies
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+    
+    - name: Update dependencies
+      working-directory: ./backend
+      run: |
+        uv sync --upgrade
+        uv export --format requirements-txt --output-file requirements.txt
+    
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v6
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: 'chore(deps): update Python dependencies'
+        title: 'chore(deps): Update Python dependencies'
+        body: |
+          Automated dependency update for Python packages.
+          
+          Please review the changes and ensure all tests pass.
+        branch: chore/update-python-deps
+        delete-branch: true
+
+  update-node-deps:
+    name: Update Node.js Dependencies  
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Update dependencies
+      working-directory: ./frontend
+      run: |
+        npm update
+        npm audit fix
+    
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v6
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: 'chore(deps): update Node.js dependencies'
+        title: 'chore(deps): Update Node.js dependencies'
+        body: |
+          Automated dependency update for Node.js packages.
+          
+          Please review the changes and ensure all tests pass.
+        branch: chore/update-node-deps
+        delete-branch: true
