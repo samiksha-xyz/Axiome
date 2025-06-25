@@ -2,7 +2,9 @@
 import "@excalidraw/excalidraw/index.css";
 import React, { useRef, useCallback } from "react";
 import MermaidEditor from "../components/MermaidEditor";
+import Header from "../components/Header";
 import dynamic from "next/dynamic";
+import { ExcalidrawElement } from "@excalidraw/excalidraw/element/types";
 
 const ExcalidrawWrapper = dynamic(
   async () => (await import("../components/excalidrawWrapper")).default,
@@ -14,7 +16,7 @@ const ExcalidrawWrapper = dynamic(
 
 // Define the shape of the ref object that ExcalidrawWrapper will expose
 interface ExcalidrawWrapperRef {
-  updateScene: (newElements: any) => void;
+  updateScene: (newElements: ExcalidrawElement[]) => void;
 }
 
 export default function Page() {
@@ -58,10 +60,8 @@ export default function Page() {
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       {/* Header/Navbar */}
-      <h1 style={{ textAlign: "center", margin: 0, padding: "10px", backgroundColor: "lightgray" }}>
-        Excalidraw Test
-      </h1>
-      <div style={{ display: "flex", flex: 1, height: "calc(100vh - 58px)" }}>
+      <Header title="Axiome" />
+      <div style={{ display: "flex", flex: 1, height: "calc(100vh - 74px)" }}>
         {/* Left box */}
         <div style={{ flex: 1, borderRight: "1px solid #ccc", overflow: "hidden", display: "flex" }}>
           <ExcalidrawWrapper ref={excalidrawWrapperRef} />
