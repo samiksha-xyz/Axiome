@@ -1,7 +1,7 @@
 "use client"; 
 import "@excalidraw/excalidraw/index.css";
 import React, { useRef, useCallback } from "react";
-import MermaidEditor from "../components/MermaidEditor";
+import TextInterface from "../components/TextInterface";
 import Header from "../components/Header";
 import dynamic from "next/dynamic";
 import { ExcalidrawElement } from "@excalidraw/excalidraw/element/types";
@@ -61,14 +61,45 @@ export default function Page() {
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       {/* Header/Navbar */}
       <Header title="Axiome" />
-      <div style={{ display: "flex", flex: 1, height: "calc(100vh - 74px)" }}>
+      
+      {/* Main content area with light grey background */}
+      <div 
+        style={{ 
+          flex: 1, 
+          backgroundColor: "#f7f7f7", // Light grey background
+          padding: "20px", // Add spacing from page boundaries
+          display: "flex",
+          gap: "20px", // Space between left and right boxes
+          height: "calc(100vh - 94px)" // Adjusted for header height + padding
+        }}
+      >
         {/* Left box */}
-        <div style={{ flex: 1, borderRight: "1px solid #ccc", overflow: "hidden", display: "flex" }}>
+        <div 
+          style={{ 
+            flex: 1, 
+            backgroundColor: "white",
+            borderRadius: "12px", // Curved corners
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
+            overflow: "hidden", 
+            display: "flex",
+            border: "1px solid #e2e8f0" // Light border
+          }}
+        >
           <ExcalidrawWrapper ref={excalidrawWrapperRef} />
         </div>
-        <div style={{ flex: 1 }}>
-          {/* Right box */}
-          <MermaidEditor onUpdate={handleUpdateDiagram} />
+        
+        {/* Right box */}
+        <div 
+          style={{ 
+            flex: 1,
+            backgroundColor: "white",
+            borderRadius: "12px", // Curved corners
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
+            overflow: "hidden",
+            border: "1px solid #e2e8f0" // Light border
+          }}
+        >
+          <TextInterface onUpdate={handleUpdateDiagram} />
         </div>
       </div>
     </div>

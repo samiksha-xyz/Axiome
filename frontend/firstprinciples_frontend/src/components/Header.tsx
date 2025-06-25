@@ -41,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ title = "Axiome" }) => {
               fontWeight: "500",
             }}
           >
-            Mermaid to Excalidraw Converter
+            First Principles
           </span>
         </div>
       </nav>
