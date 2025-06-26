@@ -2,15 +2,15 @@
 
 import React, { useState } from "react";
 
-interface MermaidEditorProps {
-  onUpdate: (mermaidCode: string) => void;
+interface AdjacencyListProps {
+  onUpdate: (adjList: string) => void;
 }
 
-const MermaidEditor: React.FC<MermaidEditorProps> = ({ onUpdate }) => {
-  const [mermaidCode, setMermaidCode] = useState(`graph TD;\n`);
+const AdjacencyList: React.FC<AdjacencyListProps> = ({ onUpdate }) => {
+  const [adjList, setadjList] = useState(``);
 
   const handleUpdateClick = () => {
-    onUpdate(mermaidCode);
+    onUpdate(adjList);
   };
 
   return (
@@ -29,11 +29,11 @@ const MermaidEditor: React.FC<MermaidEditorProps> = ({ onUpdate }) => {
         margin: 0,
         marginBottom: "4px"
       }}>
-        Mermaid Diagram Editor
+        Adjacency List Editor
       </h2>
       <textarea
-        value={mermaidCode}
-        onChange={(e) => setMermaidCode(e.target.value)}
+        value={adjList}
+        onChange={(e) => setadjList(e.target.value)}
         style={{
           height: "300px",
           width: "100%",
@@ -53,9 +53,9 @@ const MermaidEditor: React.FC<MermaidEditorProps> = ({ onUpdate }) => {
           transition: "border-color 0.2s ease, box-shadow 0.2s ease",
           boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
         }}
-        aria-label="Mermaid Diagram Input"
+        aria-label="Adjacency List Input"
         spellCheck={false}
-        placeholder="Enter your Mermaid diagram syntax here..."
+        placeholder={`A: B, C, D\nB: A, D\nC: D\nD: B`}
         onFocus={(e) => {
           e.currentTarget.style.borderColor = "#4299e1";
           e.currentTarget.style.boxShadow = "0 0 0 3px rgba(66, 153, 225, 0.1), 0 1px 3px rgba(0, 0, 0, 0.1)";
@@ -97,4 +97,4 @@ const MermaidEditor: React.FC<MermaidEditorProps> = ({ onUpdate }) => {
   );
 };
 
-export default MermaidEditor;
+export default AdjacencyList;
