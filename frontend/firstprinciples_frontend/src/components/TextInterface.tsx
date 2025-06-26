@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import MermaidEditor from "./MermaidEditor";
+import ConceptInterface from "./ConceptInterface";
 
 interface TextInterfaceProps {
   onUpdate: (mermaidCode: string) => void;
@@ -12,7 +13,7 @@ const TextInterface: React.FC<TextInterfaceProps> = ({ onUpdate }) => {
 
   const tabs = [
     { id: 0, label: "Mermaid", content: "mermaid" },
-    { id: 1, label: "Tab 2", content: "tab2" },
+    { id: 1, label: "Concepts", content: "concepts" },
     { id: 2, label: "Tab 3", content: "tab3" },
   ];
 
@@ -21,12 +22,7 @@ const TextInterface: React.FC<TextInterfaceProps> = ({ onUpdate }) => {
       case 0:
         return <MermaidEditor onUpdate={onUpdate} />;
       case 1:
-        return (
-          <div style={{ padding: "20px", textAlign: "center", color: "#666" }}>
-            <h3>Tab 2 Content</h3>
-            <p>This tab is coming soon...</p>
-          </div>
-        );
+        return <ConceptInterface />;
       case 2:
         return (
           <div style={{ padding: "20px", textAlign: "center", color: "#666" }}>

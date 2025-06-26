@@ -66,7 +66,7 @@ export default function Page() {
       <div 
         style={{ 
           flex: 1, 
-          backgroundColor: "#f7f7f7", // Light grey background
+          backgroundColor: "#f1f1f1", // Slightly darker grey background
           padding: "20px", // Add spacing from page boundaries
           display: "flex",
           gap: "20px", // Space between left and right boxes

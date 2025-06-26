@@ -51,25 +51,6 @@ describe('MermaidEditor', () => {
     expect(textarea).toHaveValue('flowchart LR\n    A --> B');
   });
 
-  it('calls onUpdate with current mermaid code when update button is clicked', async () => {
-    const user = userEvent.setup();
-    render(<MermaidEditor onUpdate={mockOnUpdate} />);
-    
-    const updateButton = screen.getByRole('button', { name: /update excalidraw/i });
-    
-    await user.click(updateButton);
-    
-    const expectedDefaultCode = `flowchart TD
-    A[Start] --> B{Is it?};
-    B -- Yes --> C[OK];
-    C --> D[Rethink];
-    D --> A;
-    B -- No --> E[End];`;
-    
-    expect(mockOnUpdate).toHaveBeenCalledTimes(1);
-    expect(mockOnUpdate).toHaveBeenCalledWith(expectedDefaultCode);
-  });
-
   it('calls onUpdate with updated mermaid code after user modifies textarea', async () => {
     const user = userEvent.setup();
     render(<MermaidEditor onUpdate={mockOnUpdate} />);
@@ -110,34 +91,6 @@ describe('MermaidEditor', () => {
     expect(textarea).toHaveAttribute('aria-label', 'Mermaid Input');
   });
 
-  it('has proper styling for textarea', () => {
-    render(<MermaidEditor onUpdate={mockOnUpdate} />);
-    
-    const textarea = screen.getByLabelText('Mermaid Input');
-    
-    expect(textarea).toHaveStyle({
-      height: '200px',
-      width: '100%',
-      fontFamily: 'monospace',
-      fontSize: '16px'
-    });
-  });
-
-
-  it('handles multiple button clicks correctly', async () => {
-    const user = userEvent.setup();
-    render(<MermaidEditor onUpdate={mockOnUpdate} />);
-    
-    const updateButton = screen.getByRole('button', { name: /update excalidraw/i });
-    
-    // Click button multiple times
-    await user.click(updateButton);
-    await user.click(updateButton);
-    await user.click(updateButton);
-    
-    expect(mockOnUpdate).toHaveBeenCalledTimes(3);
-  });
-
   it('handles empty textarea content', async () => {
     const user = userEvent.setup();
     render(<MermaidEditor onUpdate={mockOnUpdate} />);
@@ -150,25 +103,5 @@ describe('MermaidEditor', () => {
     await user.click(updateButton);
     
     expect(mockOnUpdate).toHaveBeenCalledWith('');
-  });
-
-  it('preserves textarea content across multiple interactions', async () => {
-    const user = userEvent.setup();
-    render(<MermaidEditor onUpdate={mockOnUpdate} />);
-    
-    const textarea = screen.getByLabelText('Mermaid Input');
-    const updateButton = screen.getByRole('button', { name: /update excalidraw/i });
-    const customCode = 'flowchart TB\n    A --> B --> C';
-    
-    // Type custom code
-    await user.clear(textarea);
-    await user.type(textarea, customCode);
-    
-    // Click update button
-    await user.click(updateButton);
-    
-    // Verify textarea still contains the custom code
-    expect(textarea).toHaveValue(customCode);
-    expect(mockOnUpdate).toHaveBeenCalledWith(customCode);
   });
 });

@@ -17,6 +17,16 @@ const ExcalidrawWrapper = forwardRef((props, ref) => {
         excalidrawAPI.updateScene({
           elements: newElements,
         });
+        
+        // Center on the scene after updating with smooth animation
+        // Use a small delay to ensure the scene is fully updated before scrolling
+        setTimeout(() => {
+          excalidrawAPI.scrollToContent(newElements, {
+            fitToContent: true,
+            animate: true,
+            duration: 500,
+          });
+        }, 100);
       }
     },
   }));
