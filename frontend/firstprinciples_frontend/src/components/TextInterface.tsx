@@ -11,21 +11,38 @@ interface TextInterfaceProps {
 
 const TextInterface: React.FC<TextInterfaceProps> = ({ onUpdate }) => {
   const [activeTab, setActiveTab] = useState<number>(0);
+  const [adjListContent, setAdjListContent] = useState<string>("");
+  const [mermaidContent, setMermaidContent] = useState<string>("graph TD;\n");
+
+  // Handler for when AdjacencyList generates Mermaid code
+  const handleAdjacencyListUpdate = (mermaidCode: string) => {
+    setMermaidContent(mermaidCode); // Update MermaidEditor content
+    onUpdate(mermaidCode); // Update the main diagram
+  };
 
   const tabs = [
-    { id: 0, label: "Mermaid", content: "mermaid" },
-    { id: 1, label: "Concepts", content: "concepts" },
-    { id: 2, label: "Adjacency List", content: "adjList" },
+    { id: 0, label: "Adjacency List", content: "adjList" },
+    { id: 1, label: "Mermaid", content: "mermaid" },
+    { id: 2, label: "Concepts", content: "concepts" },
+    
   ];
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 0:
-        return <MermaidEditor onUpdate={onUpdate} />;
+        return <AdjacencyList 
+          onUpdate={handleAdjacencyListUpdate} 
+          value={adjListContent}
+          onChange={setAdjListContent}
+        />;
       case 1:
-        return <ConceptInterface />;
+        return <MermaidEditor 
+          onUpdate={onUpdate} 
+          value={mermaidContent}
+          onChange={setMermaidContent}
+        />;
       case 2:
-        return <AdjacencyList onUpdate={onUpdate} />;
+        return <ConceptInterface />;
       default:
         return null;
     }

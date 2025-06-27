@@ -1,13 +1,29 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface MermaidEditorProps {
   onUpdate: (mermaidCode: string) => void;
+  value?: string;
+  onChange?: (value: string) => void;
 }
 
-const MermaidEditor: React.FC<MermaidEditorProps> = ({ onUpdate }) => {
-  const [mermaidCode, setMermaidCode] = useState(`graph TD;\n`);
+const MermaidEditor: React.FC<MermaidEditorProps> = ({ onUpdate, value, onChange }) => {
+  const [mermaidCode, setMermaidCode] = useState(value || `graph TD;\n`);
+
+  // Update internal state when external value changes
+  useEffect(() => {
+    if (value !== undefined) {
+      setMermaidCode(value);
+    }
+  }, [value]);
+
+  const handleInputChange = (newValue: string) => {
+    setMermaidCode(newValue);
+    if (onChange) {
+      onChange(newValue);
+    }
+  };
 
   const handleUpdateClick = () => {
     onUpdate(mermaidCode);
@@ -33,7 +49,7 @@ const MermaidEditor: React.FC<MermaidEditorProps> = ({ onUpdate }) => {
       </h2>
       <textarea
         value={mermaidCode}
-        onChange={(e) => setMermaidCode(e.target.value)}
+        onChange={(e) => handleInputChange(e.target.value)}
         style={{
           height: "300px",
           width: "100%",
@@ -53,7 +69,7 @@ const MermaidEditor: React.FC<MermaidEditorProps> = ({ onUpdate }) => {
           transition: "border-color 0.2s ease, box-shadow 0.2s ease",
           boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
         }}
-        aria-label="Mermaid Diagram Input"
+        aria-label="Mermaid Input"
         spellCheck={false}
         placeholder="Enter your Mermaid diagram syntax here..."
         onFocus={(e) => {

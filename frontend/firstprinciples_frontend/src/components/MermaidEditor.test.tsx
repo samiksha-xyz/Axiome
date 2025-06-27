@@ -15,25 +15,20 @@ describe('MermaidEditor', () => {
     render(<MermaidEditor onUpdate={mockOnUpdate} />);
     
     // Check if the heading is rendered
-    expect(screen.getByText('Mermaid Input')).toBeInTheDocument();
+    expect(screen.getByText('Mermaid Diagram Editor')).toBeInTheDocument();
     
     // Check if the textarea is rendered
     expect(screen.getByLabelText('Mermaid Input')).toBeInTheDocument();
     
     // Check if the update button is rendered
-    expect(screen.getByRole('button', { name: /update excalidraw/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: "Update Diagram" })).toBeInTheDocument();
   });
 
   it('displays the default mermaid code in the textarea', () => {
     render(<MermaidEditor onUpdate={mockOnUpdate} />);
     
     const textarea = screen.getByLabelText('Mermaid Input');
-    const expectedDefaultCode = `flowchart TD
-    A[Start] --> B{Is it?};
-    B -- Yes --> C[OK];
-    C --> D[Rethink];
-    D --> A;
-    B -- No --> E[End];`;
+    const expectedDefaultCode = `graph TD;\n`;
     
     expect(textarea).toHaveValue(expectedDefaultCode);
   });
@@ -56,7 +51,7 @@ describe('MermaidEditor', () => {
     render(<MermaidEditor onUpdate={mockOnUpdate} />);
     
     const textarea = screen.getByLabelText('Mermaid Input');
-    const updateButton = screen.getByRole('button', { name: /update excalidraw/i });
+    const updateButton = screen.getByRole('button', { name: "Update Diagram" });
     const newMermaidCode = 'flowchart LR\n    Start --> End';
     
     // Clear textarea and type new code
@@ -96,7 +91,7 @@ describe('MermaidEditor', () => {
     render(<MermaidEditor onUpdate={mockOnUpdate} />);
     
     const textarea = screen.getByLabelText('Mermaid Input');
-    const updateButton = screen.getByRole('button', { name: /update excalidraw/i });
+    const updateButton = screen.getByRole('button', { name: "Update Diagram" });
     
     // Clear the textarea completely
     await user.clear(textarea);

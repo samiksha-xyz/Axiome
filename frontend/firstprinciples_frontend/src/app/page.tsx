@@ -53,7 +53,7 @@ export default function Page() {
       );
     } catch (error) {
       console.error("Error converting Mermaid to Excalidraw:", error);
-      window.alert("Invalid Mermaid syntax. Please check the console for details.");
+      window.alert("Invalid syntax. Please follow the example adjacency list.");
     }
   }, []); 
 

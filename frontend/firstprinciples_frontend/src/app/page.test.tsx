@@ -172,7 +172,7 @@ describe('Page Component - Mermaid to Excalidraw Conversion', () => {
       });
 
       expect(window.alert).toHaveBeenCalledWith(
-        'Invalid Mermaid syntax. Please check the console for details.'
+        'Invalid syntax. Please follow the example adjacency list.'
       );
       expect(mockUpdateScene).not.toHaveBeenCalled();
     });
@@ -199,7 +199,7 @@ describe('Page Component - Mermaid to Excalidraw Conversion', () => {
       });
 
       expect(window.alert).toHaveBeenCalledWith(
-        'Invalid Mermaid syntax. Please check the console for details.'
+        'Invalid syntax. Please follow the example adjacency list.'
       );
       expect(mockUpdateScene).not.toHaveBeenCalled();
     });
