@@ -18,7 +18,13 @@ interface AdjacencyListProps {
  * @param input - The adjacency list as a string, where each line represents a vertex and its comma-separated neighbors.
  * @returns A Map where each key is a vertex and the value is an array of its neighboring vertices.
  * 
- * TODO: Add generation for single vertex with no neighbors
+ * TODO: Handle multi-word vertex names (e.g., "Node A: Node B, Node C")
+ * TODO: More lax syntax - correctly generate vertices separately if they are not explicitly listed 
+ * and onlyprovided in an edge
+ * TODO: Write tests
+ * TODO: Add edge weights or properties (e.g., "A: B(2), C(3)")
+ * TODO: Add multiple edges between the same vertices?
+ * TODO: Enforce undirected graph semantics, i.e., if A connects to B, B should also connect to A?
  */
 
 function parseAdjacencyList(input: string): Map<string, string[]> {
@@ -68,7 +74,8 @@ function generateMermaidUndirected(adjacencyMap: Map<string, string[]>): string 
     }
   }
   
-  return `graph TD\n${Array.from(edges).map(edge => `    ${edge}`).join('\n')}`;
+  const nodeDefinitions = Array.from(adjacencyMap.keys()).map(vertex => `    ${vertex}[[${vertex}]]`).join('\n');
+  return `graph TD\n${Array.from(edges).map(edge => `    ${edge}`).join('\n')}\n${nodeDefinitions}`;
 }
 
 /**
@@ -88,7 +95,8 @@ function generateMermaidDirected(adjacencyMap: Map<string, string[]>): string {
     }
   }
   
-  return `graph TD\n${edges.join('\n')}`;
+  const nodeDefinitions = Array.from(adjacencyMap.keys()).map(vertex => `    ${vertex}[[${vertex}]]`).join('\n');
+  return `graph TD\n${edges.join('\n')}\n${nodeDefinitions}`;
 }
 
 // Main conversion function
