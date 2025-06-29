@@ -2,10 +2,32 @@
 
 import React from "react";
 
+const API_URL = "http://localhost:8000"; // TODO import from .env.local or .env.development
+
 const ConceptInterface: React.FC = () => {
-  const handleButtonClick = (buttonIndex: number) => {
-    console.log(`Button ${buttonIndex + 1} clicked`);
-    // You can add functionality here later
+  const buttonTitles = [
+    "What is a Graph?",
+    "Graph Representations", 
+    "Graph Traversal",
+    "Traversal Types"
+  ];
+
+  const handleButtonClick = async (buttonIndex: number) => {
+    console.log(`Button "${buttonTitles[buttonIndex]}" clicked`);
+    try {
+      const response = await fetch(`${API_URL}/api/concepts/message`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: buttonTitles[buttonIndex] }),
+      });
+      console.log("Response status:", response.status);
+
+    } catch (error) {
+      console.error("Error fetching concept:", error);
+      throw error;
+    }
   };
 
   return (
@@ -19,7 +41,7 @@ const ConceptInterface: React.FC = () => {
         alignItems: "stretch"
       }}
     >
-      {[...Array(5)].map((_, index) => (
+      {buttonTitles.map((title, index) => (
         <button
           key={index}
           onClick={() => handleButtonClick(index)}
@@ -60,7 +82,7 @@ const ConceptInterface: React.FC = () => {
             e.currentTarget.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
           }}
         >
-          Button {index + 1}
+          {title}
         </button>
       ))}
     </div>
