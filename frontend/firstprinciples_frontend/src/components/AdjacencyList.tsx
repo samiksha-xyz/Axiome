@@ -74,7 +74,7 @@ function generateMermaidUndirected(adjacencyMap: Map<string, string[]>): string 
     }
   }
   
-  const nodeDefinitions = Array.from(adjacencyMap.keys()).map(vertex => `    ${vertex}[[${vertex}]]`).join('\n');
+  const nodeDefinitions = Array.from(adjacencyMap.keys()).map(vertex => `    ${vertex}[${vertex}]`).join('\n');
   return `graph TD\n${Array.from(edges).map(edge => `    ${edge}`).join('\n')}\n${nodeDefinitions}`;
 }
 
@@ -95,7 +95,7 @@ function generateMermaidDirected(adjacencyMap: Map<string, string[]>): string {
     }
   }
   
-  const nodeDefinitions = Array.from(adjacencyMap.keys()).map(vertex => `    ${vertex}[[${vertex}]]`).join('\n');
+  const nodeDefinitions = Array.from(adjacencyMap.keys()).map(vertex => `    ${vertex}[${vertex}]`).join('\n');
   return `graph TD\n${edges.join('\n')}\n${nodeDefinitions}`;
 }
 

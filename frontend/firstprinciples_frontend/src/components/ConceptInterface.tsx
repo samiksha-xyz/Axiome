@@ -22,7 +22,25 @@ const ConceptInterface: React.FC = () => {
         },
         body: JSON.stringify({ message: buttonTitles[buttonIndex] }),
       });
+      
       console.log("Response status:", response.status);
+      
+      // Parse the JSON response
+      const data = await response.json();
+      console.log("Full response data:", data);
+      
+      if (data.status === "success") {
+        console.log("Gemini response:", data.gemini_response);
+        console.log("Processing time:", data.processing_time);
+        // You can now access the structured data:
+        // data.gemini_response.concept_name
+        // data.gemini_response.explanation
+        // data.gemini_response.mermaid_diagram
+        // data.gemini_response.code_example
+        // data.gemini_response.next_step_prompt
+      } else {
+        console.error("API Error:", data.error);
+      }
 
     } catch (error) {
       console.error("Error fetching concept:", error);

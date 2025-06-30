@@ -6,9 +6,11 @@ authors = [
     {name = "Suhas Prakash", email = "suh4s@users.noreply.github.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
     "fastapi[standard]>=0.115.14",
+    "google-generativeai>=0.8.5",
+    "python-dotenv>=1.1.1",
 ]
 
 [project.optional-dependencies]
@@ -35,17 +37,17 @@ python_functions = "test_*"
 
 [tool.black]
 line-length = 88
-target-version = ['py38']
+target-version = ['py39']
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py39"
 line-length = 88
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W"]
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 strict = false
 warn_return_any = true
 warn_unused_configs = true
