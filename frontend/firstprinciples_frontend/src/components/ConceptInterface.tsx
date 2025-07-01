@@ -12,6 +12,8 @@ const ConceptInterface: React.FC = () => {
     "Traversal Types"
   ];
 
+  // TODO: Handle Gemini API response and display structured data
+  
   const handleButtonClick = async (buttonIndex: number) => {
     console.log(`Button "${buttonTitles[buttonIndex]}" clicked`);
     try {
@@ -38,6 +40,8 @@ const ConceptInterface: React.FC = () => {
         // data.gemini_response.mermaid_diagram
         // data.gemini_response.code_example
         // data.gemini_response.next_step_prompt
+        console.log("Concept Name:", data.gemini_response.concept_name);
+        console.log("Explanation:", data.gemini_response.explanation);
       } else {
         console.error("API Error:", data.error);
       }
