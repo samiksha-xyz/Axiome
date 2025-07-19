@@ -1,3 +1,12 @@
 {
-  "signedContributors": []
+  "signedContributors": [
+    {
+      "name": "echutch",
+      "id": 65572180,
+      "comment_id": 3091367985,
+      "created_at": "2025-07-19T01:45:57Z",
+      "repoId": 998244953,
+      "pullRequestNo": 5
+    }
+  ]
 }
