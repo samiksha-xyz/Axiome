@@ -1,13 +1,14 @@
 """API routes for concept-related endpoints."""
 
-from fastapi import APIRouter
-from pydantic import BaseModel
-from ...core.config import GEMINI_API_KEY  
-from google import genai
-from google.genai import types
 import json
 import time
 
+from fastapi import APIRouter
+from google import genai
+from google.genai import types
+from pydantic import BaseModel
+
+from ...core.config import GEMINI_API_KEY
 
 router = APIRouter(prefix="/api/concepts", tags=["concepts"])
 
@@ -36,7 +37,8 @@ async def receive_message(request: MessageRequest):
     try:
         client = genai.Client(api_key=GEMINI_API_KEY)
         model = "gemini-2.5-flash"
-        system_instruction = """You are an expert computer science professor specializing in data structures and algorithms, 
+        system_instruction = """You are an expert computer science professor
+        specializing in data structures and algorithms,
         with a talent for making complex topics easy to understand for developers."""
 
         config = types.GenerateContentConfig(
@@ -57,21 +59,21 @@ async def receive_message(request: MessageRequest):
         # Parse response as JSON
         try:
             gemini_response = json.loads(response.text)
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             return {
                 "status": "error",
                 "error": "Invalid JSON response from Gemini",
                 "raw_response": response.text,
                 "processing_time": time.time() - start_time
             }
-        
+
         # Return structured response
         return {
             "status": "success",
             "gemini_response": gemini_response,
             "processing_time": time.time() - start_time
         }
-        
+
     except Exception as e:
         return {
             "status": "error",
@@ -80,16 +82,19 @@ async def receive_message(request: MessageRequest):
             "processing_time": time.time() - start_time
         }
 
-    
-# TODO: Implement specific instructions for each concept type outside of the overall prompt.
+
+# TODO: Implement specific instructions for each concept type
 def get_prompt(message: str) -> str:
     """Generate a prompt based on the user's message."""
-    prompt = f""" 
-    Your task is to teach me graph algorithms, one concept at a time, starting with the absolute fundamentals. 
-    I will be parsing your responses to display them in a custom frontend learning application, 
-    so you must follow the specified format precisely. For this lesson, please explain the concept: {message}.
+    prompt = f"""
+    Your task is to teach me graph algorithms, one concept at a time, starting with
+    the absolute fundamentals. I will be parsing your responses to display them in a
+    custom frontend learning application, so you must
+    follow the specified format precisely.
+    For this lesson, please explain the concept: {message}.
 
-    Provide your entire response as a single, clean JSON object. The JSON must have the following keys:
+    Provide your entire response as a single, clean JSON object.
+    The JSON must have the following keys:
     {{
         "concept_name": "A string containing the title of the current concept.",
         "explanation": "A clear, concise explanation of the concept, its components (like vertices and edges), and the difference between directed and undirected graphs. Use markdown for formatting.",

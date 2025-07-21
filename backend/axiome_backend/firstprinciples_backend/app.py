@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .api.routes.concepts import router as concepts_router
-from .core.config import APP_TITLE, APP_DESCRIPTION, APP_VERSION, CORS_SETTINGS
+from .core.config import APP_DESCRIPTION, APP_TITLE, APP_VERSION, CORS_SETTINGS
 
 app = FastAPI(
     title=APP_TITLE,

@@ -1,0 +1,319 @@
+hello uh welcome to the first class of my algorithms huddle series the topic
+for today is depth for search um but it's depth for search deconstructed so
+I'm assuming that you're already familiar with depth for search we're going to look at what we already know
+about depth for search and just dig around that a little bit okay so sliding right in to the to DFS 101 what is the
+DFS Basic Idea
+basic idea we have a search space of distinct entities or nodes and they have
+pairwise links called edges what is the contract of depth for
+search the contract is well depth for search first of all is defined on a
+given start Noe so what would DFS in this particular example what would DFS
+on a what does that mean the contract of DFS of a would be to visit all the nodes
+that are reachable from a in in depth for search manner what does that mean
+what is depth for search rule or depth for search way it's quite
+simply to pick one neighbor and go deep into that neighbor
+what does that mean in this particular example we are looking at DFS of a it
+has two neighbors B and C we first explore all the nodes that
+are reachable from B and once we are done exploring B depth
+first so going as deep into b as we can then we come back to a and then we try
+its next neighbor in this case that is C and then we go explore all the nodes
+that are reachable from C and then we are done with depth for search of a so that is the basic idea now I mean it's
+DFS Contract
+simple but not that simple so let's uh knit pick a little bit on the contract
+that says DFS of a is to visit all nodes reachable from a a few caveats is first
+one what if there are Cycles in the graph and even without Cycles what if
+there is a particular node in this case let's say d that's been highlighted what
+if the node D is reachable from both B and C so if we doing depth first search
+on a it has two neighbors like in both of the examples on top it has two
+neighbors B and C should depth for search of B and depth for search of C
+should they both cover node D no and this is where the concept of keeping
+track of a set of nodes that has already been visited across the various DFS
+calls so far that's where it comes from and this is where we have the data structure visited which is a set of
+nodes that have already been explored by depth for search so this changes the contract a little bit visit
+all nodes that are unvisited and reachable from a a tiny bit more of
+niche-picking here uh look at the case down below that where you have this node
+a so let's say you did depth for search on a and that calls depth for search on B
+and at this moment when depth for search on B has been called if you look at node
+C it is both unvisited and reachable from
+B There is a path from B to C but that for search of B is not going to explore
+C so I guess our contract is not entirely correct is it because because
+we are saying visit all nodes unvisited and reachable but that's not what we are
+doing so how can we change that we can come up with a new definition so why would just to step back a bit why would
+B not visit C because the only way B can visit C here is via a which is already
+visited so let's make a quick definition called unvisited reachable so C is not
+unvisited reachable from B for for C to be unvisited reachable
+from B B has to be able to go to C using a path that has only unvisited
+nodes on it and so that makes c not unvisited reachable from B so that's
+brings a little further Clarity to our contract is DFS of
+X now the function header changes has the data structure visited in it and the
+contract is to visit all nodes that are unvisited reachable well I
+have I just want to fix this really quick sorry about
+that because it's not we're talking about X now
+so okay was it all knows that are unvisited reachable from X and assume
+that X is unvisited okay so so looking at the basic structure of the
+code and I'm sure this is what you know this is what our classical knowledge of DFS includes is this code and so I just
+want to put it back up there DFS of X comma visited usually the first thing we
+do is Mark X visited because we're on it now and then we just have this for Loop
+that goes over all the neighbors of X and then do DFS on each neighbor but
+before you do DFS on each neighbor check if it has has already been covered by
+one of the previous DFS calls there are some other variants of this code where
+you would do the marking of a node as visited before you call DFS on it you
+can so you have a few choices in terms of where do I Mark a node visited and
+where do I check if a node is already visited so if you see some DFS code out there you might come across another
+variant of this code um just wanted to point that out here and time and space
+complexity um just a quick reminder the time complexity of DFS is order V plus e
+where V is the number of nodes and E is the number of edges a very quick way of
+understanding this is um DFS is not called at least using this
+variant of ours here DFS is not called more than once on a given node so we have no more maximum order V calls to
+DFS and we have maximum order e checks
+that if Loop if Y is not inv visited we won't check it more than once for every
+Edge so in the worst case the work we will do is order V plus e the space
+complexities order V because I guess in the worst case the entire graph could be one big cycle and then we will have all
+the DFS calls active at the same time on the stack okay so that's the time and
+space complexity and the basic DFS contract and code that we see out there next we look at just wanted to
+point out this phenomena of when the input graph to DFS is not fully
+Outer Wrapper Code
+connected then what's going to happen you will call DFS on one of the nodes it's not going to end up covering the
+entire graph so just pointing out that DFS to a randomly chosen node of a graph
+is not guaranteed to cover all the nodes of the graph so if you want to do DFS on
+a graph that is not fully connected you might need multiple starting DFS calls so to
+illustrate that with an example on the top here we have a graph so this this
+whole thing is a graph this here so that's your input graph and as you can see it has two
+components one is a b and c that are all connected and then and D and E are part of a separate component so here we will
+need multiple starting DFS calls right so the way we usually do it and you will
+see this in code everywhere where you look at DFS on on a graph is just have an outer wrapper and what this outer
+wrapper does is well it initializes visited to empty and then for all the
+nodes in the graph just it's just iterates in a for Loop over all the nodes in the graph and what if
+the the graph if the node is not visited it just calls DFS on it what's going to
+happen uh when we run this outer wrapper on this particular example um let's say
+the sequence in which it processes the nodes is
+um a b c d e then what's going to happen it's going to call DFS on a because a
+will not be visited in the beginning and that DFS on a will end up exploring a b
+and c then it's going to try and call DFS on B in this uh let me highlight
+this in this for Loop here it will not call DFS on B because
+it's already been visited and it will not call DFS on C because it's already been visited then it will try and call
+DFS on D which will actually get called and it will end up covering both d and e
+and then it will try e and it will not call DFS on E because
+it's already been explored so that's just the story of the DFS outer wrapper
+and uh I've added another quick example here on the side to illustrate that it
+doesn't have to be a graph that doesn't look fully connected this one kind of looks connected but as you can tell if
+you call DFS on a it will cover A and B but it won't cover C so that's kind of
+the point behind the outer wrapper all right moving on um three more things
+I wanted to point out about DFS and um hopefully you'll enjoy this or it'll be
+Timestamping
+a good reminder of what you already know time stamping backtracking and the idea
+of a DFS tree so let's try timestamping okay we're going to
+actually run DFS on this graph that we have here and we will timestamp every
+node with with the start time when the DFS started
+on that node and when DFS was done when the call to DFS is finished on that
+particular node by time stamping we're just using a simple Global counter okay so let's do this so we are
+starting with DFS of a so the time the counter right now is
+1 DFS has started let's say it visits its neighbor C
+first now the time stamp the the timer is two the global counter excuse me so
+C's DFS is starting at time two then we let's say C goes to its neighbor F
+first three F does not have anywhere to go it only has one neighbor C and it's
+already been visited so we're done with f so that's four that is the finish time for f then F goes back we'll do these
+and dotted arrows to c c is still not done C actually has three neighbors a f
+and g a is already visited F has already just been visited by C so now it's going
+to try G so now it's going to go to G and the time now is 5 G is going
+to yes only one neighbor B and time is six and B is now done
+because it has two neighbors G and a and they're both already visited so B is done at
+s it comes back to its scholar g g is now done at time 8 goes back to
+its scholar C who is now done at time
+nine and goes back to its scholar a who is not now done at time 10 so now we
+have this is the time stamping right all these times and this can be incredibly useful
+in certain applications of DFS there can be some interesting information that we
+can extract about the nodes based on their start and finish times so it's one
+good thing to know about DFS that you can enhance it with this time stamping backtracking as you already saw in
+our uh you know working of this particular example is um inherent to how
+Backtracking
+DFS unfolds on the graph it's not just a side effect of using recursive code to
+implement DFS I would say backtracking is so inherent to how DFS unfolds and that it
+recursion is just a beautiful fit for it so
+backtracking and recursion just an excellent fit for the nature of DFS okay
+um what was the third thing yes DFS tree so every DFS walk on a graph imposes a
+DFS Tree
+DFS tree that captures this particular Trace so if you look at what we did here
+we started with a a actually has two neighbors C and B but it did not end up exploring B so a only went to C and you
+can see this is the graph that is here a went the tree a to c c went to f and g
+and G went to B so DFS walk on every graph imposes a DFS tree that captures
+this Trace just good to know might or might not be useful um but it does
+deepen our familiarity with DFS okay moving on observations so far we did a
+bit of nitpicking on the contract of DFS and uh really clarified it that felt
+Recap
+good unvisited reachable we learned about time stamping DFS 3 uh we noticed
+that not all edges are walked if you go back to this example you can see that the Edge from A to B was never really
+walked by DFS just something to note and that backtracking is and going back to
+the the collar node uh is quite inherent to how DFS
+unfolds Okay so pause um now we're ready
+to dig a little bit more let's look
+at a DFS unfolding on a tree on a directed ayylic graph maybe a directed
+cyclic graph and see if there's anything to to note um and then we'll do a little
+compare and contrast with DFS and BFS okay DFS on a
+tree as you can see I have the example here and now you guys know what all this drama of edges and dotted edges means um
+DFS on a Tree
+DFS being called and then returning and then you know the start and end time so I've just added it here in case you want
+to pause and really kind of revise how DFS would work on a tree now a tree gets
+handed to us usually with the root node and the call to DFS there will end up
+exploring the entire tree right so what can we note here well first of all there
+are no cycles and there is no need for
+visited because for every node there is only one incoming Edge from its parent
+this being a tree so that's the first observation second one is that the DFS
+tree is going to be same as the input tree yes and each Edge will be walked
+okay it's good to know moving on to DFS on a directed a cyclic graph these are
+my favorite graphs to do DFS fun with um we definitely need visited here we
+DFS on a Directed Acyclic Graph
+already saw that in an earlier example um as you can see here
+that there are no Cycles this is a directed ayylic graph but we still need
+visited because we don't want to do the extra work right by the
+time uh you know for example a does not want to EXP explore e because e um no a
+does explore e what is a good example here do d d okay when we come to DFS of
+e we are not going to have we don't want to go back again to B right does that
+make sense yes that one is good because B the dfsm B has already
+done and happened a very um so it just something to note that in directed AIC C
+graph it's not about infinite Loops as much as it is about avoiding extra work
+um and if you want to understand this further you can pause the video right now you have uh how DFS exactly unfolds
+on this uh directed a cyclic graph and take the time to really understand this that it's not about infinite Loops if
+there are no Cycles it's about extra work okay time stamping we already know what
+time stamping is but in um directed ayylic graphs there is a
+Time stamping takes on a little bit more meaning so if there is an edge going from node X to node y y is going to
+finish DFS on Y is going to finish before DFS on X doesn't matter what node
+you started your DFS with doesn't matter um what the outer wrapper did and what
+exact sequence did it go over all the nodes y will finish before X and this
+observation is key to the linear time algorithms to do topological sorting of
+all the nodes on a directed ayc graph so this is a really powerful and this is where time stamping becomes really
+powerful and um nothing too tricky but the DFS tree is
+obviously not unique it's going to be completely different uh based on where you start your DFS
+here we started it on a and this is the DFS tree we got in purple below but you can try starting DFS on some other notes
+here and you'll see that you'll get a different tree okay DFS on a
+directed cyclic graph so it's directed but it does have Cycles okay not a whole lot different
+DFS on a Directed (cyclic) Graph
+than an undirected cllc graph but I just wanted to include it here visited as obviously
+needed cuz we can have infinite loops and if there is an edge going from node
+C to node a uh there's nothing we can guarantee about the Finish times it can
+finish before c or it can finish after C as you can see in the two examples on the left here so that's kind of
+interesting that Cycles remove that particular
+um observation that we had on time stamping does not have that um Nuance to
+it okay how about DFS on undirected graphs well we've already seen that so I
+must have included this here just for completion visited is a must have because we can have infinite Loops time
+DFS on Undirected Graphs
+stamping can be informative but maybe not as useful it doesn't have the same
+Nuance like we just said as in uh a cyclic directed graphs um how can it be
+informative if you just look at the time stamps here for example let's just pick on one node let's look
+at C so C has start time of two finish time of N9 and if you look at the DFS
+tree here let me highlight the C part so this is the DFS tree rooted at C and
+this this sub tree has four nodes in it
+and the start time of C as DFS unfolded was two and the end time was nine and
+this will be true for every no that you can determine the size of the subtree rooted at a given node in the DFS Tree
+by looking at the start and finish time so it's finish time minus start time divided by two and taking the uh taking
+the ceiling of that so I'll leave the details for you to work out but I just wanted to point this out that um don't
+give up on time stamping just because there are no uh if there are cycle go still it could have some information in
+it and who knows it could be interest it could be interesting for some problem out there
+okay all right so that was we looked at DFS on trees directed ayylic graphs
+directed cyclic graphs undirected graphs okay now this can be an entire class on its
+BFS vs DFS
+own so I'm not going to cover it in its full depth but I thought DFS deconstructed would be just sort of
+incomplete without at least a little comp compare and contrast with BFS so we
+have this two examples I think it's just good to see some of these differences by
+using a simple tree uh so I have the same tree and we are going to do DF BFS
+on one and then we are going to do depth for search on the same tree and then make a few observations so let's dive in
+so let's do uh BFS this side on the left tree starting at the root this is how
+trees get handed to us so now we go to B
+starting at time one and then actually let's not do time stamping we'll just
+notice the sequence in which the nodes are visited what is the sequence in which we are covering all the nodes and
+all the let's just look at it from that lens so I'm just going to Tim stamp every node with when it got visited so
+one for a now we're going to visit B then we are going to visit C right
+that's breadth for search so now we're done with level one now we are going to
+visit d e f and g so that's going to be four 5 six and seven and I I think
+there's no need to worry so much about Edge walks right now for breath for search so I just want you guys to look
+at this so breath for search of a is going to visit the nodes in the
+following sequence a b c d e f g and we already know that and I've put those
+that sequence at the bottom here let me Circle that so look
+here so this is BFS of a a b CDE e f g
+if you look at BFS of the node B if we were to do bread for search just on node
+B then that bread for search will go B and then d and e as it's highlighted
+here okay and I just wanted to point this I just wanted to point this out so
+this is bread for search of B this is bread for search of c and this is bread
+for search of a correct and as you can see b d and e which is the sequence in
+which bread first search of B will visit the three nodes underneath B it's not
+all together together in breath for search of a and the reason I'm pointing it out is that breath for search of a
+doesn't include inside of it breath for search of B breath for search of B is
+kind of scattered a little bit so it's not inherently uh a recursive algorithm
+bre for search extremely powerful for some uh particular applications especially those involving shortest
+paths and hopefully we'll get to cover some of those in uh a future class so I just wanted to point this out
+about bread first search that uh it is not inherently recursive in nature and
+the data structure of a queue naturally uh facilitates the bookkeeping of what the
+current state is and what the next action for breadth for search would be will be now moving on to depth for
+search you guys already know this now and you have been reminded very well with all the mess we made earlier with
+depth for search that first search on this tree is going to you know unfold starting with a then
+going to B then going to D all done with d come back then going to
+e all done with e back to a and then from a it's going to C which
+is the fifth node visited and then six and seven right so and and here as we
+know as you already know a stack naturally facilitates the bookkeeping that's required of current state and
+next action and if you look at depth for search of a the entire sequence it is um
+let me Circle this so I know which part of the notes of the Whiteboard I'm talking about this part so depth for search of a is a bde
+CFG depth for search of B is bde which is included as a substring in the depth
+for search of a sequence and I just wanted to demonstrate that about depth
+for search that it is an inherently recursive algorithm now the other thing
+I wanted to point out that's up here is this depth for search produces a
+traceable walk so if you were tracing the graph as the depth as
+depth for searches unfolding on it you wouldn't need to
+lift your hand so uh just to demonstrate that very
+quickly let's choose a color okay to do the highlighting so you are on a from a
+you went to B from B you went to D and so you can
+just come back from D then you're going to e so whatever you want to do next is
+always a neighboring node whether it's going to a neighbor or whether it's
+going back to your collar and from B you go back to a so as you can see this is a
+trace yes so it's all one Trace you can do it without without lifting your
+finger not the case with bread for search so from a we we chase this Edge
+to include B and then C and now a after C we got to go to this Edge right so
+this this traveling from C to
+B and so it's just it's not uh a super technical issue it's not like oh we have
+to know this but I think it's a curious thing to know about depth for search which makes depth for search a really
+good fit for certain applications where maybe we might not
+naturally think about it for example if the search space of you know distinct
+entities your graph your input graph if it is laid out in the form of a physical
+space let's say a grid and uh you want to cover the space
+using a robot then this is I'm setting this up a little bit so I feel like I'm cheating a little bit because I'm going
+to do my next video on the robot room cleaner problem which uses depth for search but the reason depth for search
+is such a good fit for those problems is because of this attribute of it that it produces a traceable
+walk um it's not exactly the depth first nature of depth first search that's
+sometimes needed to solve a problem efficiently it's this aspect of it so I just thought I I pointed out okay um so
+final observations we learn a whole bunch of uh things about depth first search U we
+made a I think we made a decent sized mess we looked at unvisited reachable
+timestamping DFS trees hopefully if you want to revisit it you can go back to
+that particular slide in the video pause it and look at it a little bit more work it out for yourself as always feel free
+Final Observations
+to send me any questions if you want a clarification or if you find a bug I'd be happy to add some comments as part of
+my video or add some subtitles to point out my mistakes um so these are just the op a
+summary of everything that we did today okay um that's it is that everything
+about DFS and a particular question that was actually asked of Me by more than one
+engineer when I was teaching them something similar was um
+that they felt a little bit bad that they didn't already know this stuff so if I'm a worthy esteemed CS student
+software engineer Etc shouldn't I know this already well I think for those of you who know me know very well that my
+answer to both those questions is no it's a resounding no you guys no this is
+not everything about DFS I'm pretty sure there's plenty more um and that a bigger
+mess can be made and absolutely no a huge loud no to that
+second question if I'm a worthy esteemed CS student shouldn't I know this already of course not usually depth for search
+comes to us we learn depth for search and many Concepts and computer science
+we learn them on our way somewhere else on our way towards completing your
+course on our way towards um lead coding if you're preparing for interviews on
+our way um to learning maybe something about
+graph algorithms but usually um you know the input comes to us as a graph
+adjacency lists and and we learn classical DFS with the code and the contract on it and it it's not the most
+conducive way to learn all these nuances doesn't make it the wrong way I think it
+it's fine um learning is well this series is about learning algorithms and
+it especially targeted to Engineers because I think Engineers we like to live in that middle space um where we
+don't have the the time or sometimes even the inclination to go fullon
+academic rigor on everything but practicality of our job where we are
+making um so many decisions based on partial knowledge we get particularly
+good at um you know looking under the hood
+beyond the Health page of a data structure on an algorithm and just getting to the story of it and making
+making decisions based on that so this is what this series is going to be about not fullon academic rigor and not um you
+know just looking at the usage or the API or the contract of things so
+learning more about the story and that learning is can be hard on knowledge and this is one of my
+favorite quotes of all time learning is hard on knowledge like kids are hard on furniture so if you are feeling a sense
+of discomfort when you learn something a little bit deeper um I just want to
+point out that the discomfort belongs and it doesn't mean anything learning does include some
+unknowing uh so hopefully you guys had fun and I will see you in the next
+class bye
+
