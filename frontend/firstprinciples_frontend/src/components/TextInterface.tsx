@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import MermaidEditor from "./MermaidEditor";
-import ConceptInterface from "./ConceptInterface";
+import ChatInterface from "./ChatInterface";
 import AdjacencyList from "./AdjacencyList";
 
 interface TextInterfaceProps {
@@ -42,7 +42,7 @@ const TextInterface: React.FC<TextInterfaceProps> = ({ onUpdate }) => {
           onChange={setMermaidContent}
         />;
       case 2:
-        return <ConceptInterface />;
+        return <ChatInterface />;
       default:
         return null;
     }
