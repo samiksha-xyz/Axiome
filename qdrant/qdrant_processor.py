@@ -1,7 +1,7 @@
 import uuid
 from typing import List, Optional
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct, CollectionInfo
+from qdrant_client.models import Distance, VectorParams, PointStruct, CollectionInfo, Document
 from sentence_transformers import SentenceTransformer
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from markitdown import MarkItDown
@@ -10,7 +10,7 @@ from markitdown import MarkItDown
 QDRANT_HOST = "localhost"
 QDRANT_PORT = 6333
 DEFAULT_COLLECTION_NAME = "documents"
-EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
+EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 VECTOR_SIZE = 384  # Vector dimension for all-MiniLM-L6-v2 model
 CHUNK_SIZE = 1000
 CHUNK_OVERLAP = 200
@@ -141,19 +141,19 @@ class QdrantDocumentProcessor:
             List[dict]: List of similar chunks with scores and metadata
         """
         # Generate embedding for the query
-        query_embedding = self.embedding_model.encode([query])[0].tolist()
+        # query_embedding = self.embedding_model.encode([query])[0].tolist()
         
         # Search in Qdrant
         search_results = self.client.query_points(
             collection_name=collection_name,
-            query=query_embedding,
+            query=Document(text=query, model=EMBEDDING_MODEL_NAME),
             limit=limit,
-            score_threshold=score_threshold
+            # score_threshold=score_threshold
         )
         
         # Format results
         results = []
-        for result in search_results:
+        for result in search_results.points:
             results.append({
                 "id": result.id,
                 "score": result.score,
@@ -199,23 +199,28 @@ def process_and_embed_document(
 
 
 if __name__ == "__main__":
-    DOC_TO_CONVERT = "https://www.youtube.com/watch?v=V2qZ_lgxTzg"
-    COLLECTION_NAME = "first_principles"
+    # Fill in the document URL, collection name, and metadata
+    DOC_TO_CONVERT = "./docs/dfs.txt"
+    #Video: "https://www.youtube.com/watch?v=A6USyp46MZI"
 
+    COLLECTION_NAME = "first_principles"
+    METADATA = {"source": "Depth First Search - Deconstructed", "topic": "DFS"}
+
+    # Convert document to markdown
+    print("Starting MarkItDown...")
     md = MarkItDown()
     print("Converting document to markdown...")
     result = md.convert(DOC_TO_CONVERT)
-    print(result.text_content)
 
-    # # Create processor instance
+    # Create processor instance
     processor = QdrantDocumentProcessor()
-    
-    # # Process and embed the document
+
+    # Process and embed the document
     print("Processing document...")
     point_ids = processor.process_and_embed_document(
          document=result.text_content,
          collection_name=COLLECTION_NAME,
-         metadata={"source": "sample", "topic": "artificial_intelligence"} #TODO
+         metadata=METADATA
     )
 
     print(f"Inserted points with IDs: {point_ids[:3]}...")  # Show first 3 IDs
@@ -225,13 +230,13 @@ if __name__ == "__main__":
     print(f"Collection info: {info}")
     
     # # Example search
-    # print("\nSearching for 'machine learning'...")
-    # results = processor.search_similar_chunks(
-    #     query="machine learning",
-    #     collection_name="ai_documents",
-    #     limit=3
-    # )
-    
-    # for i, result in enumerate(results, 1):
-    #     print(f"\nResult {i} (Score: {result['score']:.3f}):")
-    #     print(f"Text: {result['text'][:100]}...")
+    print("\nSearching for 'backtracking'...")
+    results = processor.search_similar_chunks(
+         query="backtracking",
+         collection_name=COLLECTION_NAME,
+         limit=3
+     )
+
+    for i, result in enumerate(results, 1):
+        print(f"\nResult {i} (Score: {result['score']:.3f}):")
+        print(f"Text: {result['text'][:100]}...")
