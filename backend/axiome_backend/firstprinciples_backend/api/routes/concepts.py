@@ -3,22 +3,26 @@
 import json
 import time
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from google import genai
 from google.genai import types
 from pydantic import BaseModel
 
-from ...core.config import GEMINI_API_KEY
+from ...core.config import GEMINI_API_KEY, QDRANT_COLLECTION_NAME
+from ...core.dependencies import QdrantRetriever, get_qdrant_retriever
 
 router = APIRouter(prefix="/api/concepts", tags=["concepts"])
 
 
 class MessageRequest(BaseModel):
     """Request model for receiving messages from frontend."""
+
     message: str
+
 
 class GeminiResponse(BaseModel):
     """Response model for Gemini API."""
+
     concept_name: str
     explanation: str
     mermaid_diagram: str
@@ -27,11 +31,18 @@ class GeminiResponse(BaseModel):
 
 
 @router.post("/message")
-async def receive_message(request: MessageRequest):
+async def receive_message(
+    request: MessageRequest,
+    qdrant_retriever: QdrantRetriever = Depends(get_qdrant_retriever),
+):
     """Receive a message from the frontend and log it."""
     print(f"Received message from frontend: {request.message}")
 
-    prompt = get_prompt(request.message)
+    # Retrieve context from Qdrant
+    context = retrieve_context(request.message, qdrant_retriever)
+    print(f"Retrieved context: {context}")
+
+    prompt = get_prompt(request.message, context)
 
     start_time = time.time()
     try:
@@ -47,13 +58,11 @@ async def receive_message(request: MessageRequest):
             response_mime_type="application/json",
             system_instruction=system_instruction,
             thinking_config=types.ThinkingConfig(thinking_budget=0),
-            response_schema=GeminiResponse
+            response_schema=GeminiResponse,
         )
 
         response = client.models.generate_content(
-            model=model,
-            contents=prompt,
-            config=config
+            model=model, contents=prompt, config=config
         )
 
         # Parse response as JSON
@@ -64,14 +73,14 @@ async def receive_message(request: MessageRequest):
                 "status": "error",
                 "error": "Invalid JSON response from Gemini",
                 "raw_response": response.text,
-                "processing_time": time.time() - start_time
+                "processing_time": time.time() - start_time,
             }
 
         # Return structured response
         return {
             "status": "success",
             "gemini_response": gemini_response,
-            "processing_time": time.time() - start_time
+            "processing_time": time.time() - start_time,
         }
 
     except Exception as e:
@@ -79,18 +88,22 @@ async def receive_message(request: MessageRequest):
             "status": "error",
             "error": str(e),
             "error_type": type(e).__name__,
-            "processing_time": time.time() - start_time
+            "processing_time": time.time() - start_time,
         }
 
 
 # TODO: Implement specific instructions for each concept type
-def get_prompt(message: str) -> str:
-    """Generate a prompt based on the user's message."""
+def get_prompt(message: str, context: str) -> str:
+    """Generate a prompt based on the user's message and retrieved context."""
     prompt = f"""
-    Your task is to teach me graph algorithms, one concept at a time, starting with
-    the absolute fundamentals. I will be parsing your responses to display them in a
-    custom frontend learning application, so you must
-    follow the specified format precisely.
+    Based on the following context, your task is to teach me graph algorithms,
+    one concept at a time, starting with the absolute fundamentals.
+    I will be parsing your responses to display them in a custom frontend learning application,
+    so you must follow the specified format precisely.
+
+    Context:
+    {context}
+
     For this lesson, please explain the concept: {message}.
 
     Provide your entire response as a single, clean JSON object.
@@ -106,3 +119,16 @@ def get_prompt(message: str) -> str:
     return prompt
 
 
+def retrieve_context(message: str, retriever: QdrantRetriever) -> str:
+    """Retrieve context for the given message using Qdrant."""
+
+    search_results = retriever.search_similar_chunks(
+        query=message,
+        collection_name=QDRANT_COLLECTION_NAME,
+        limit=3,  # Adjust the number of results as needed
+    )
+
+    # Format the results into a single string for the prompt
+    context = "\n".join([result["text"] for result in search_results])
+
+    return context

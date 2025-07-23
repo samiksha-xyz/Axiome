@@ -35,3 +35,14 @@ if not GEMINI_API_KEY:
         "GEMINI_API_KEY environment variable is required. "
         "Please add it to your .env file in the backend directory."
     )
+
+# Qdrant configuration
+QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
+QDRANT_PORT = int(os.getenv("QDRANT_PORT", 6333))
+QDRANT_COLLECTION_NAME = os.getenv("QDRANT_COLLECTION_NAME", "first_principles")
+EMBEDDING_MODEL_NAME = os.getenv(
+    "QDRANT_EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"
+)
+QDRANT_VECTOR_SIZE = int(os.getenv("QDRANT_VECTOR_SIZE", 384))
+QDRANT_CHUNK_SIZE = int(os.getenv("QDRANT_CHUNK_SIZE", 1000))
+QDRANT_CHUNK_OVERLAP = int(os.getenv("QDRANT_CHUNK_OVERLAP", 100))
