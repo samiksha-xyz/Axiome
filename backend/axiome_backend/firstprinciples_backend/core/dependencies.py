@@ -39,9 +39,7 @@ class QdrantRetriever:
                     "id": result.id,
                     "score": result.score,
                     "text": payload.get("text", ""),
-                    "metadata": {
-                        k: v for k, v in payload.items() if k != "text"
-                    },
+                    "metadata": {k: v for k, v in payload.items() if k != "text"},
                 }
             )
 
