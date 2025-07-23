@@ -98,7 +98,8 @@ def get_prompt(message: str, context: str) -> str:
     prompt = f"""
     Based on the following context, your task is to teach me graph algorithms,
     one concept at a time, starting with the absolute fundamentals.
-    I will be parsing your responses to display them in a custom frontend learning application,
+    I will be parsing your responses
+    to display them in a custom frontend learning application,
     so you must follow the specified format precisely.
 
     Context:
@@ -109,11 +110,23 @@ def get_prompt(message: str, context: str) -> str:
     Provide your entire response as a single, clean JSON object.
     The JSON must have the following keys:
     {{
-        "concept_name": "A string containing the title of the current concept.",
-        "explanation": "A clear, concise explanation of the concept, its components (like vertices and edges), and the difference between directed and undirected graphs. Use markdown for formatting.",
-        "mermaid_diagram": "A string containing valid Mermaid.js 'graph TD' syntax for a simple diagram that illustrates the concept. This diagram must be renderable in a tool like Excalidraw.",
-        "code_example": "A simple pseudo-code or JavaScript example representing the graph, preferably using an adjacency list.",
-        "next_step_prompt": "A string containing the exact prompt I should use for the next logical lesson in this learning series."
+        "concept_name":
+            "A string containing the title of the current concept.",
+        "explanation":
+            "A clear, concise explanation of the concept,
+            its components (like vertices and edges),
+            and the difference between directed and undirected graphs.
+            Use markdown for formatting.",
+        "mermaid_diagram":
+            "A string containing valid Mermaid.js 'graph TD' syntax
+            for a simple diagram that illustrates the concept.
+            This diagram must be renderable in a tool like Excalidraw.",
+        "code_example":
+            "A simple pseudo-code or JavaScript example representing the graph,
+            preferably using an adjacency list.",
+        "next_step_prompt":
+            "A string containing the exact prompt I should use
+            for the next logical lesson in this learning series."
     }}
     """
     return prompt
