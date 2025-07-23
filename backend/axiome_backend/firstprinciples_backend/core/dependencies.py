@@ -1,3 +1,5 @@
+from typing import Optional
+
 from qdrant_client import QdrantClient
 from qdrant_client.models import Document
 
@@ -31,13 +33,14 @@ class QdrantRetriever:
 
         results = []
         for result in search_results.points:
+            payload = result.payload or {}
             results.append(
                 {
                     "id": result.id,
                     "score": result.score,
-                    "text": result.payload.get("text", ""),
+                    "text": payload.get("text", ""),
                     "metadata": {
-                        k: v for k, v in result.payload.items() if k != "text"
+                        k: v for k, v in payload.items() if k != "text"
                     },
                 }
             )
@@ -46,7 +49,7 @@ class QdrantRetriever:
 
 
 # Global instance to be initialized on startup
-qdrant_retriever: QdrantRetriever | None = None
+qdrant_retriever: Optional[QdrantRetriever] = None
 
 
 def get_qdrant_retriever() -> QdrantRetriever:

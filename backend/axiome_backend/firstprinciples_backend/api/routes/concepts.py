@@ -67,6 +67,13 @@ async def receive_message(
 
         # Parse response as JSON
         try:
+            if response.text is None:
+                return {
+                    "status": "error",
+                    "error": "Empty response from Gemini",
+                    "raw_response": None,
+                    "processing_time": time.time() - start_time,
+                }
             gemini_response = json.loads(response.text)
         except json.JSONDecodeError:
             return {

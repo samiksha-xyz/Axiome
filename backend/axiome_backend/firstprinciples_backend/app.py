@@ -47,7 +47,13 @@ app = FastAPI(
 )
 
 # Configure CORS for frontend integration
-app.add_middleware(CORSMiddleware, **CORS_SETTINGS)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_SETTINGS["allow_origins"],
+    allow_credentials=CORS_SETTINGS["allow_credentials"],
+    allow_methods=CORS_SETTINGS["allow_methods"],
+    allow_headers=CORS_SETTINGS["allow_headers"],
+)
 
 # Include routers
 app.include_router(concepts_router)

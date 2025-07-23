@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+from typing import Any, Dict, List
 
 from dotenv import load_dotenv
 
@@ -20,7 +21,7 @@ ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Next.js default port
 ]
 
-CORS_SETTINGS = {
+CORS_SETTINGS: Dict[str, Any] = {
     "allow_origins": ALLOWED_ORIGINS,
     "allow_credentials": True,
     "allow_methods": ["*"],
