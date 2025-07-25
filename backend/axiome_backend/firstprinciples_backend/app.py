@@ -36,7 +36,6 @@ async def lifespan(app: FastAPI):
 
     except Exception as e:
         print(f"Qdrant connection test failed: {e}")
-        print("This confirms the issue is with the basic connection to Qdrant.")
 
     yield
     print("Closing application resources.")
