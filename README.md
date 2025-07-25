@@ -30,4 +30,22 @@ The FastAPI docs can be accessed at `http://localhost:8000/docs`.
 cd ../frontend/firstprinciples_frontend
 npm run dev
 ```
-The Next.js frontend can be accessed at `http://localhost:3000`
+The Next.js frontend can be accessed at `http://localhost:3000`.
+
+## Testing
+
+### Backend
+```
+cd backend
+uv run pytest -v
+uv run ruff check .
+uv run black .
+uv run mypy .
+```
+
+### Frontend
+```
+cd frontend
+npm test
+npm run lint
+```

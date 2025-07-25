@@ -37,14 +37,22 @@ async def receive_message(
 ):
     """Receive a message from the frontend and log it."""
     print(f"Received message from frontend: {request.message}")
+    start_time = time.time()
 
     # Retrieve context from Qdrant
-    context = retrieve_context(request.message, qdrant_retriever)
+    try:
+        context = retrieve_context(request.message, qdrant_retriever)
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "error_type": type(e).__name__,
+            "processing_time": time.time() - start_time,
+        }
     print(f"Retrieved context: {context}")
 
     prompt = get_prompt(request.message, context)
 
-    start_time = time.time()
     try:
         client = genai.Client(api_key=GEMINI_API_KEY)
         model = "gemini-2.5-flash"
