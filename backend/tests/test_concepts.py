@@ -13,13 +13,6 @@ from axiome_backend.firstprinciples_backend.core.dependencies import (
 client = TestClient(app)
 
 
-@pytest.fixture(autouse=True)
-def setup_env_vars(monkeypatch):
-    """Setup environment variables for testing."""
-    monkeypatch.setenv("GEMINI_API_KEY", "test-key")
-    monkeypatch.setenv("QDRANT_COLLECTION_NAME", "test-collection")
-
-
 @pytest.fixture
 def mock_qdrant_retriever():
     """Fixture to mock the QdrantRetriever dependency."""
