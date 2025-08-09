@@ -11,7 +11,7 @@ Python backend for the Axiome algorithm learning platform.
 uv sync
 
 # Virtual environment
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+source .venv/bin/activate  # On Windows: source .venv/Scripts/activate
 
 # Add a new dependency
 uv add package-name
