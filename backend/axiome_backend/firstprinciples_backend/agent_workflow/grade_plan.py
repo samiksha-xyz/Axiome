@@ -23,7 +23,7 @@ grader_model = init_chat_model(
 )
 
 
-def grade_plan(state: LessonState) -> Literal["research", "generate_example"]:
+async def grade_plan(state: LessonState) -> Literal["research", "generate_example"]:
     """Determine whether additional research is needed for the lesson plan."""
     # TODO: Error handling for missing state keys
     topic = state['topic']
@@ -33,7 +33,7 @@ def grade_plan(state: LessonState) -> Literal["research", "generate_example"]:
     prompt = GRADE_PROMPT.format(topic=topic, context=context, lesson_plan=lesson_plan)
     response = (
         grader_model
-        .with_structured_output(GradeLesson).invoke(
+        .with_structured_output(GradeLesson).ainvoke(
             {"role": "user", "content": prompt}
         )
     )
