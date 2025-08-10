@@ -17,7 +17,6 @@ async def lifespan(app: FastAPI):
     dependencies.qdrant_retriever = dependencies.QdrantRetriever()
     print("Qdrant retriever initialized.")
 
-    # Test the connection to Qdrant
     print("Testing Qdrant connection...")
     try:
         # Try a simple operation to test connectivity
@@ -35,6 +34,7 @@ async def lifespan(app: FastAPI):
             print(f"Collection 'first_principles' not found or error accessing it: {e}")
 
     except Exception as e:
+        #TODO: Better error handling - disable qdrant retriever if connection fails to prevent further errors
         print(f"Qdrant connection test failed: {e}")
 
     yield

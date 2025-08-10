@@ -1,8 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Literal
 from .lesson_state import LessonState
-from langchain_google_genai import GoogleGenerativeAI
-
+from langchain.chat_models import init_chat_model
 GRADE_PROMPT = (
     "You are a grader assessing quality of an algorithms lesson plan to a specified topic.  \n "
     "Here is the topic and related context:  \n\n {topic} \n\n {context} \n\n"
@@ -18,6 +17,11 @@ class GradeLesson(BaseModel):
         description="Relevance score: 'yes' if relevant, or 'no' if not relevant."
     )
 
+#TODO: Choose imported model based on config
+grader_model = init_chat_model(
+    "google_genai:gemini-2.5-flash", temperature=0
+)
+
 
 def grade_plan(state: LessonState) -> Literal["research", "generate_example"]:
     """Determine whether additional research is needed for the lesson plan."""
@@ -27,3 +31,16 @@ def grade_plan(state: LessonState) -> Literal["research", "generate_example"]:
     lesson_plan = state['lesson_plan']
 
     prompt = GRADE_PROMPT.format(topic=topic, context=context, lesson_plan=lesson_plan)
+    response = (
+        grader_model
+        .with_structured_output(GradeLesson).invoke(
+            {"role": "user", "content": prompt}
+        )
+    )
+
+    score = response.binary_score
+
+    if score.lower() == "yes":
+        return "generate_example"
+    else:
+        return "research"
