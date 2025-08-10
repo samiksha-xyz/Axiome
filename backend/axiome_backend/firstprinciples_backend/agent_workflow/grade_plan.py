@@ -31,10 +31,10 @@ async def grade_plan(state: LessonState) -> Literal["research", "generate_exampl
     lesson_plan = state['lesson_plan']
 
     prompt = GRADE_PROMPT.format(topic=topic, context=context, lesson_plan=lesson_plan)
-    response = (
+    response = await (
         grader_model
         .with_structured_output(GradeLesson).ainvoke(
-            {"role": "user", "content": prompt}
+            prompt
         )
     )
 

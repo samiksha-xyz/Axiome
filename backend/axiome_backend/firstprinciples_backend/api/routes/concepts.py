@@ -11,6 +11,8 @@ from pydantic import BaseModel
 from ...core.config import GEMINI_API_KEY, QDRANT_COLLECTION_NAME
 from ...core.dependencies import QdrantRetriever, get_qdrant_retriever
 
+from ...agent_workflow.build_graph import build_graph
+
 router = APIRouter(prefix="/api/concepts", tags=["concepts"])
 
 
@@ -51,53 +53,19 @@ async def receive_message(
         }
     print(f"Retrieved context: {context}")
 
-    prompt = get_prompt(request.message, context)
-
+    chain = build_graph()
     try:
-        client = genai.Client(api_key=GEMINI_API_KEY)
-        model = "gemini-2.5-flash"
-        system_instruction = """You are an expert computer science professor
-        specializing in data structures and algorithms,
-        with a talent for making complex topics easy to understand for developers."""
-
-        config = types.GenerateContentConfig(
-            temperature=0.1,
-            max_output_tokens=2000,
-            response_mime_type="application/json",
-            system_instruction=system_instruction,
-            thinking_config=types.ThinkingConfig(thinking_budget=0),
-            response_schema=GeminiResponse,
-        )
-
-        response = client.models.generate_content(
-            model=model, contents=prompt, config=config
-        )
-
-        # Parse response as JSON
-        try:
-            if response.text is None:
-                return {
-                    "status": "error",
-                    "error": "Empty response from Gemini",
-                    "raw_response": None,
-                    "processing_time": time.time() - start_time,
-                }
-            gemini_response = json.loads(response.text)
-        except json.JSONDecodeError:
-            return {
-                "status": "error",
-                "error": "Invalid JSON response from Gemini",
-                "raw_response": response.text,
-                "processing_time": time.time() - start_time,
+        final_state = await chain.ainvoke(
+            {
+                "topic": request.message,
+                "context": context,
+                "lesson_plan": "",
+                "research_notes": "",
+                "example": "",
+                "diagram": "",
+                "final_output": "",
             }
-
-        # Return structured response
-        return {
-            "status": "success",
-            "gemini_response": gemini_response,
-            "processing_time": time.time() - start_time,
-        }
-
+        )
     except Exception as e:
         return {
             "status": "error",
@@ -105,6 +73,71 @@ async def receive_message(
             "error_type": type(e).__name__,
             "processing_time": time.time() - start_time,
         }
+    print(f"Final state reached")
+    print(final_state["final_output"])
+
+    #TODO: Reformat to fit frontend requirements
+
+    return {
+        "status": "success",
+        "explanation": final_state['final_output'],
+        "processing_time": time.time() - start_time,
+    }
+
+    # prompt = get_prompt(request.message, context)
+
+    # try:
+    #     client = genai.Client(api_key=GEMINI_API_KEY)
+    #     model = "gemini-2.5-flash"
+    #     system_instruction = """You are an expert computer science professor
+    #     specializing in data structures and algorithms,
+    #     with a talent for making complex topics easy to understand for developers."""
+
+    #     config = types.GenerateContentConfig(
+    #         temperature=0.1,
+    #         max_output_tokens=2000,
+    #         response_mime_type="application/json",
+    #         system_instruction=system_instruction,
+    #         thinking_config=types.ThinkingConfig(thinking_budget=0),
+    #         response_schema=GeminiResponse,
+    #     )
+
+    #     response = client.models.generate_content(
+    #         model=model, contents=prompt, config=config
+    #     )
+
+    #     # Parse response as JSON
+    #     try:
+    #         if response.text is None:
+    #             return {
+    #                 "status": "error",
+    #                 "error": "Empty response from Gemini",
+    #                 "raw_response": None,
+    #                 "processing_time": time.time() - start_time,
+    #             }
+    #         gemini_response = json.loads(response.text)
+    #     except json.JSONDecodeError:
+    #         return {
+    #             "status": "error",
+    #             "error": "Invalid JSON response from Gemini",
+    #             "raw_response": response.text,
+    #             "processing_time": time.time() - start_time,
+    #         }
+
+    #     # Return structured response
+    #     return {
+    #         "status": "success",
+    #         "gemini_response": gemini_response,
+    #         "processing_time": time.time() - start_time,
+    #     }
+
+    # except Exception as e:
+    #     return {
+    #         "status": "error",
+    #         "error": str(e),
+    #         "error_type": type(e).__name__,
+    #         "processing_time": time.time() - start_time,
+    #     }
 
 
 # TODO: Implement specific instructions for each concept type

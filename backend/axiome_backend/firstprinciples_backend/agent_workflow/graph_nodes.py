@@ -15,6 +15,7 @@ async def plan_lesson(state: LessonState) -> LessonState:
     print("--- Planning Lesson ---")
     #TODO: Error handling for missing state keys
     topic = state['topic']
+    context = state['context']
 
     #TODO: Improve prompt, add to PromptTemplate
     prompt = f"""You are an expert computer science professor
@@ -32,7 +33,7 @@ async def plan_lesson(state: LessonState) -> LessonState:
     if 'research_notes' in state and state['research_notes']:
         prompt += f"Use the following research notes to enhance your plan: \n\nAdditional research notes: {state['research_notes']}"
 
-    response = llm.ainvoke(prompt)
+    response = await llm.ainvoke(prompt)
     state['lesson_plan'] = response.content
     print("Lesson Plan Generated.")
     return state
@@ -47,12 +48,11 @@ async def research(state: LessonState) -> LessonState:
     # TODO: Error handling for missing state keys
     topic = state['topic']
     lesson_plan = state['lesson_plan']
+    context = state['context']
 
-    context = "" # Placeholder for context retrieval logic
+    prompt = f"Based on the topic '{topic}' and the given context, generate some additional research notes to enrich the lesson.\n\nCONTEXT:\n{context}"
 
-    prompt = f"Based on the topic '{topic}' and the given context, generate some additional research notes to enrich the lesson.\n\CONTEXT:\n{context}"
-
-    response = llm.ainvoke(prompt)
+    response = await llm.ainvoke(prompt)
     state['research_notes'] = response.content
 
     print("Research Notes Generated.")
@@ -64,15 +64,15 @@ async def generate_example(state: LessonState) -> LessonState:
     """
 
     print("--- Generating Example ---")
-   # TODO: Error handling for missing state keys
-   topic = state['topic']
-   lesson_plan = state['lesson_plan']
+    # TODO: Error handling for missing state keys
+    topic = state['topic']
+    lesson_plan = state['lesson_plan']
 
     prompt = f"""Create a detailed, step-by-step walkthrough example for the topic '{topic}'. 
     Use an engaging and informative tone. Use maximum size of n = 5 for the input in your example.
     Follow the guide laid out by the lesson plan to make the example clear and comprehensive.\n\nLESSON PLAN:\n{lesson_plan}"""
     
-    response = llm.ainvoke(prompt)
+    response = await llm.ainvoke(prompt)
     state['example'] = response.content
 
     print("Example Generated.")
@@ -100,7 +100,7 @@ async def generate_diagram(state: LessonState) -> LessonState:
     """
 
     # TODO: Structured output for diagram generation
-    response = llm.ainvoke(prompt)
+    response = await llm.ainvoke(prompt)
     state['diagram'] = response.content
 
     print("Diagram Generated.")
@@ -144,7 +144,7 @@ async def consolidate(state: LessonState) -> LessonState:
     {diagram}
     """
     
-    response = llm.ainvoke(prompt)
+    response = await llm.ainvoke(prompt)
     
     state['final_output'] = response.content
     print("Consolidation Complete.")

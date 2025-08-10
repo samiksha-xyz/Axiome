@@ -14,6 +14,7 @@ class LessonState(TypedDict):
     """
 
     topic: str
+    context: str
     lesson_plan: str
     research_notes: Optional[str]
     example: str
