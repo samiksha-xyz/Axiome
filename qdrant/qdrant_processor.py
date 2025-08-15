@@ -200,11 +200,11 @@ def process_and_embed_document(
 
 if __name__ == "__main__":
     # Fill in the document URL, collection name, and metadata
-    DOC_TO_CONVERT = "./docs/dfs.txt"
+    DOC_TO_CONVERT = "./docs/dfs_example.txt"
     #Video: "https://www.youtube.com/watch?v=A6USyp46MZI"
 
     COLLECTION_NAME = "first_principles"
-    METADATA = {"source": "Depth First Search - Deconstructed", "topic": "DFS"}
+    METADATA = {"source": "Robot Room Cleaner DFS Solution", "topic": "DFS Example"}
 
     # Convert document to markdown
     print("Starting MarkItDown...")

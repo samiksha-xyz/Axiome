@@ -100,7 +100,7 @@ function generateMermaidDirected(adjacencyMap: Map<string, string[]>): string {
 }
 
 // Main conversion function
-function adjacencyListToMermaid(input: string, isDirected: boolean = false): string {
+export function adjacencyListToMermaid(input: string, isDirected: boolean = false): string {
   const adjacencyMap = parseAdjacencyList(input);
   
   if (isDirected) {

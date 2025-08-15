@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MermaidEditor from "./MermaidEditor";
-import ChatInterface from "./ChatInterface";
-import AdjacencyList from "./AdjacencyList";
+import ChatInterface, { Message } from "./ChatInterface";
+import AdjacencyList, { adjacencyListToMermaid } from "./AdjacencyList";
 
 interface TextInterfaceProps {
   onUpdate: (mermaidCode: string) => void;
@@ -13,6 +13,34 @@ const TextInterface: React.FC<TextInterfaceProps> = ({ onUpdate }) => {
   const [activeTab, setActiveTab] = useState<number>(0);
   const [adjListContent, setAdjListContent] = useState<string>("");
   const [mermaidContent, setMermaidContent] = useState<string>("graph TD;\n");
+
+  // Lifted chat state
+  const [messages, setMessages] = useState<Message[]>(() => {
+    // Initialize from localStorage if available
+    if (typeof window !== 'undefined') {
+      try {
+        const savedMessages = localStorage.getItem('chat_messages');
+        return savedMessages ? JSON.parse(savedMessages) : [];
+      } catch (error) {
+        console.warn('Failed to load chat messages from localStorage:', error);
+        return [];
+      }
+    }
+    return [];
+  });
+  const [inputValue, setInputValue] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // Persist messages to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('chat_messages', JSON.stringify(messages));
+      } catch (error) {
+        console.warn('Failed to save chat messages to localStorage:', error);
+      }
+    }
+  }, [messages]);
 
   // Handler for when AdjacencyList generates Mermaid code
   const handleAdjacencyListUpdate = (mermaidCode: string) => {
@@ -42,7 +70,19 @@ const TextInterface: React.FC<TextInterfaceProps> = ({ onUpdate }) => {
           onChange={setMermaidContent}
         />;
       case 2:
-        return <ChatInterface />;
+        return <ChatInterface 
+          messages={messages}
+          setMessages={setMessages}
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+          onDiagram={(diagram: string) => {
+            setAdjListContent(diagram);
+            const mermaidCode = adjacencyListToMermaid(diagram, false); // undirected
+            handleAdjacencyListUpdate(mermaidCode);
+          }}
+        />;
       default:
         return null;
     }

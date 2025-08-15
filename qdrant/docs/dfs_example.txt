@@ -1,0 +1,526 @@
+Intro
+hello welcome to my algorithms huddle Series this is class number two today we
+are going to look at using depth for search to solve the robot room cleaner
+problem so this class is not an exhaustive treatment of the robot room
+cleaner problem for those who have attended my live classes and workshops
+you know how much I enjoy problem exploration for its own
+sake uh and in the future I will teach a few of those classes where we take a
+first principles look at at a problem today is not that class
+today we are learning a particular solution to a particular problem DFS being the solution and the problem is
+robot room cleaner so let's get right into the problem here's a quick
+Robot Room Cleaner Problem Introduction
+introduction to the problem so we have a a room which is in
+the form of a 2d grid and it
+has these cells some cells are free some have obstacles all the free let's make some
+obstacles here so let's say these cells are blocked
+off for example all the free cells are connected so the
+underlying graph is connected so we don't have two or
+more disconnected pieces of this of this puzzle so that's one assumption the next
+assumption or consideration rather is to remember that we do not have direct
+access to this grid okay so that's an aspect of this room part of robot room
+cleaner we don't have direct access to it we have to discover this grid via the
+robot which is the second part of our input the more explicit part is the robot so the robot is let's say starts
+off on um an unspecified
+cell it can face in any of the four directions up right down down and left
+and the robot has a fixed API so the API of the robot let's write it down here on
+the left is three actions so there is the right turn just adjust the camera a
+little bit so there is the right turn this makes the robowar turn right
+by 90° this operation always succeeds then there is the action or or
+operation called clean which also is always successful and it what it does it
+cleans the cell that the robot is currently on if the cell is already been cleaned I guess it'll clean it again
+okay um the last and the trickiest action that the robot can do is move now
+Move May return either true or
+false when will it return true when the cell that the robot is
+facing is existent so it exists and is free so
+when you invoke this action on the robot robot. move it will attempt to move the
+robot to the cell that it's currently facing if it's able to move there it
+will do so it will keep facing the same direction as it is right now and it will
+return true if it's not a able to move because um you know the cell is occupied
+or the cell doesn't exist because you're at the boundary of the grid then it's
+going to return false okay so that's the robot so we got the room some cells are
+free some are not all free cells are connected there's no direct access to this grid and then
+we got the robot with the three apis the problem is
+to write design an algorithm that when
+implemented executes a particular sequence of these three commands Write
+Clean and move in such a way that ends up cleaning all the free cells of the
+grid okay so very quickly to look at an example so some of you know how I am a
+you know a big Enthusiast of slowing down at this stage of the problem solving process
+and taking a little bit extra time to say uh deeper FL friendlier longer
+hello to the problem so if you are new to this problem at this point you might want to pause this and look at this
+example and sort of Hand Solve IT don't worry about the grid not being available just look at the robots actions and how
+they might go so for example in this in this uh grid we have a 3 by
+three grid and so nine cells four of them are occupied five of them are free
+and need to be cleaned the robot is in cell that we're calling here a facing up
+so one possible uh Journey that the robot might
+take is from a it might go to C so first clean a it's facing C then move to C
+clean C now it's facing D now move to D B clean D now it's facing nowhere then
+take two right turns do 180° movement come back to
+C and now you're facing a at this point the robot could do three right turns to
+turn 270° to face e and then move to e clean e one more
+right turn move to B clean B so that's just a way of spending some more time
+with the problem so I encourage you if you're brand new to this problem to do this perhaps for maybe one more example
+so you and the problem become good friends and you spend some time okay
+so now here what I have done is just put together
+Key Observations
+officially everything we know about this problem right now what is the input what is the expected outcome what are the
+assumptions what are the considerations so you know take some time to go over
+this I will just very quickly point out so the input
+is to be clear the robot the grid is an implicit part of
+the input it's not explicitly provided to us we know that the robot is on an
+unknown free cell of a 2d grid okay and we know the
+three ways we can move the robot so that's that's part of the Assumption the outcome is make the robot clean all the
+free cells okay and the considerations which we didn't talk about so you know what what are we trying to optimize here
+um let's say we do not want to clean a cell
+twice and try not to visit a cell too many times I know that's a little bit
+lose but we're just getting started so we don't have any strict considerations just try to do
+um try to visit a cell once twice let's try and not visit
+it more than twice you know not too many times and turns what about right turns for now let's not worry about the right
+turns do what you have to do let's assume that the turns are cheap okay so we are going to write code that executes
+a sequence of robot commands that clean all the free cells all right so that was
+the problem now the particular solution to this problem that we are studying is applying DFS so is DFS a fit well the
+Why DFS?
+underlying graph is this undirected fully connected graph so there is very
+clearly a graph at play so we could apply DFS to it each
+node has four or less neighbors so it's not a humongous graph it's not super
+dense the dense sort of quite uniform one thing about DFS that makes
+it a pretty decent fit for this problem is that DFS as it unfolds on a graph it
+produces a traceable walk so
+whenever the DFS moves are go to a neighbor or come back to your caller
+which is always your you know there's always an Edge connecting the two nodes
+that talk so and if this is
+something that is confusing to you you might consider watching my other video
+called DFS deconstructed which is also a part of this series um in fact it's the
+one that I did just before uh the robot this particular one so there we talk a
+little bit more about this traceable walk business so this particular attribute of DFS does make it an
+interesting enough fit to try so the robot can only move to an immediate
+neighbor meaning that if we make the robot go over the free cells in a DFS
+way we will never require the robot to jump across the cells okay
+so it's a decent fit now that we have put that out of the way let's look at a
+few considerations if we are going to do DFS via the robot then we need to switch
+gear to this robot and grid world out of you know normally when we look at DFS we
+looking at an adjacency list or the root of a tree if it's a tree here we don't have the graph provided to us in any
+explicit way so we need to take a pause and really think about what what it would
+mean to make the robot do DFS we have to make the robot copy or
+mirror all the DFS moves very carefully like go to the neighbor that
+you are facing come back to the cell that you came from which is Return To
+Your Collar in the DFS recursive structure um things like face the next
+neighbor when you have an adjacency list it's just a for Loop that iterates over the list itself and you always have the
+next neighbor ready when you start a new iteration of the for Loop here we are
+going to have to make the robot turn um and then face the next neighbor that's
+the only way we can discover the next neighbor and go there so and so on so this is one consideration to keep in
+mind the second one is this graph can absolutely have
+Cycles so we are going to need the
+visited set of DFS now if you remember this from your DFS uh learning when the underlying
+graph has Cycles or if there is uh even when it doesn't in some particular
+instances again you can see these details in the DFS deconstructed video but the visited set is
+needed it's an absolute musthave when there are Cycles let's just say so for
+our purpose here the graph can have Cycles so we need visited what is visited it is a data
+set that keeps track of all the cells or nodes of the graph that have already
+been visited by DFS in order to Mark a cell visited we
+need to be able to uniquely identify each
+cell and in order to know so let's say we have a way to uniquely identify each
+cell when I am doing DFS on a particular cell of the grid the way the visited business
+actually unfolds is when I am about to go to a neighbor I check if the neighbor
+is already visited if it is then I don't go there that's the how of visited the Y
+is Cycles right but the how is this is how it unfolds so in order for our
+robot to know the unique identity of the
+neighbor the neighboring cell it's about to go to it's also going to need to know
+its current direction okay so Direction awareness is going to be needed in order
+to uniquely identify the facing neighbor and unique identities for each
+cell are needed in order to make the visited set possible so these
+are some considerations to think about now in some online descriptions of the
+robot room cleaner problem they will provide a 01 two
+dimensional grid when they're explaining the problem that is just for testing so I don't want you to get sidetracked with
+that or some some people have reported to me that they found that confusing the algorithm must guide the robot
+blindfolded using only the three commands now we are applying depth for
+search to robot room cleaner to play with and to deepen our DFS familiarity
+and our knowledge okay like I said earlier if we wanted to play with robot room cleaner from scratch that would be
+a slightly different exploration in the beginning okay jumping right into the
+Solution Idea Setup
+setup okay this is for this particular problem I think this would be one mistake that someone might do is to
+start writing the code this problem has so many moving Parts in terms of making the robot mirror the DFS
+moves that it's worth it to take some time to go over the setup of the problem
+before we jump into the final code okay so setup part one has two two basic
+setups here one you the question of the unique ID for each cell since we don't
+have direct access to the grid we don't have an obvious way to uniquely identify
+each cell so this is the technique we are going to use and this is something that you'll see in other problems as
+well so if this is the first time you're seeing it I hope you're getting a chuckle out of it it's the cute little
+clever thing so the cell the unspecified cell that the robot starts out on let's
+call that cell 0 0 like here let me highlight this so you know which one I'm
+talking about so this okay so this is the z00 cell now
+um any other cell in this grid the unique identifier for any other
+cell it's going to be a pair of two
+integers the first one is the distance along the x axis of this cell from the starting cell
+and the second part of the pair is the distance along the the Y AIS from the
+starting cell so as you can see here cell a it is one row above the starting
+cell and it is two columns to the right of the starting cell so the unique identifier for cell a is 1 comma 2 now
+look at cell b it is three rows below the starting cell and it is one column
+to the right of the starting cell so its identifier would be -3 and positive 1
+similarly look at cell C here it is one row below the starting
+cell and four columns to the left of the starting cell so it's Unique identifier would be -1 -4 so that's our solution
+our Pro proposal for generating a unique ID for each cell now Direction
+tracking Direction tracking this is what we are proposing that let we have four
+Direction let's call them Direction give them integer identifiers you'll see in a minute why that helps so up is zero
+right is one down is two left is three now it seems random enough but it's not
+so the way we have these directions as 0 1 2 3 we have the concept of next Direction
+so if you look at the direction zero the direction that is next is Direction 1
+which is one 190° right turn away from zero so
+the value of next direction is plus one
+modul 4 and the meaning of next direction is one right turn 190° right
+turn from the current direction okay so that's the direction
+tracking next part of the setup now we know that the way we end up using
+the visited set the key way that we use the visited set is this when DFS is
+executing on a cell it's going to recurse on all the cells neighbors just
+before it's about to recurse on a neighbor it checks if the neighbor has already been visited so in order to know
+that we will need to know the unique identifier of a neighbor that we are facing before we consider going there so
+this is a tiny little sub routine and I'm going to highlight the sub routine bit here neighbor given the current location
+of the robot which is X comma Y and given the integer value of the current
+direction the robot is facing which is D compute the unique ID of the neighbor
+that the robot is currently facing so you I have set it up few different ways in case this is something you would want
+to spend a little more time with you can pause here and look into it um I will just go through the sub routine and you
+can look at this diagram over here which explains it really well so if the current direction is up the neighbor
+you're facing is plus one to your row ID and leave the column as it is if the
+robot is facing down you are doing ne1 to your x value and leaving the y value
+as it is similarly for right and left so this is how we are going to compute the unique ID of the neighbor that the robot
+is facing given the current direction okay so this is a sub routine that's going to come in handy
+later little bit more setup so another thing that DFS very naturally does when
+you look at the code for DFS using the adjacency list of the
+input graph is just iterating over all four of its neighbors so given that the
+robot is on the cell XY and currently it's facing the direction there how do
+we iterate over all all all four neighbors so this is the way we are
+going to you're going to see in the final code repeating four times the
+following three steps compute the current neighbor you are
+facing do whatever you want to do with that information when you are done and you are in the next iteration of the for
+Loop take your robot turn it 90° to the right and then compute the next
+Direction by doing current direction plus one module 4 now you are facing the next
+neighbor do whatever you want to do with that neighbor reposition the robot the way it
+was when you're all done then write turn compute the next Direction now you're
+facing the next neighbor if you do this four times you would have faced all four
+neighbors one at a time okay so this is how we are going to iterate over all four of ael's
+neighbors okay so this is so I taught a live class on this problem um as part of
+my live class and workshop series and this was a question that came up from a few people so I wanted to take a moment
+to clarify it one more time why are we tracking the direction of the robot
+is it because we do not have direct access to the
+Recap of Solution Idea
+grid we just saw that we can visit the four neighbors with three successive right
+turns we can discover the four neighbors like that we can even visit
+them we don't need to track exactly what the direction is in order to just
+discover neighbors so discovering is not the problem discovering can be done without knowing
+exactly what the direction is the ne the reason we need to know
+exactly what direction the robot is facing at all times is so we can
+identify identify the facing
+neighbor identif coming up with the unique idea of the neighbor we are facing is the reason we are tracking
+Direction why do we need to identify it because we might not want to go there in
+order to avoid looping infinitely on account of the underlying graph having
+Cycles okay so I just wanted to clarify that before we move
+further last bit of setup okay uh mirroring DFS moves not to take that
+part for granted what are the DFS moves go to the neighbor that's easy if I'm facing the
+neighbor all I have to do is robot. move and I go to them neighbor then what then
+you recurse do your DFS business at the neighbor okay that we're we're going to let the leap of faith of recursion take
+Setup cont’d
+care of that then come back to your caller when you're all
+done this is where I want you to pause and think how do we
+reliably bring the robot back to its
+collar once it's done recursing so let's say this was cell a and this is
+cell b okay DFS on a has now called moved the robot to B then call DFS on B
+DFS on B finishes now I want to bring the robot back to a how do I do that can I do that
+if I don't know the direction the robot is facing
+when it is all done with the DFS on
+B and I think you can see that we can't when the robot is done doing DFS on B if
+it is facing right I need to turn at 180°
+and then move it back to a if it is
+facing left then it can just come back with a simple move right
+and if it is facing like here up then it needs to do
+three right turns and then it's ready to come back to the caller so I can't right
+we can't reliably bring the robot back if we don't know which direction it's facing so let's do this so This is
+actually not just set up towards the code but this also helps us clarify the
+contract of our DFS calls and again those of you who have attended my classes you know how excited I get about
+the clarity of the contract of a function before you write the function I think you can avoid a lot of headache if
+you can take some time to really clarify the contract so let's require this okay
+we're going to require this when the DFS call on a particular cell is all done
+the robot must face the same direction as it was
+facing just at the start of its DFS call so I am a
+cell somebody sent the robot to me and when they sent it to me the robot was
+facing left when I'm all done doing my business my DFS business from me then I must
+leave the robot exactly as it was before I started doing the DFS business okay so
+once we require that then we can reliably bring it back how turn
+180° and move okay so there we go now we
+are ready finally to at least put down the function header and the contract so
+before we get to the recursive DFS bit let's look at the outside bit this one
+I'm highlighting here here which is robot roam cleaner main wrapper because
+we need the main wrapper to uh declare and initialize the visited so visited is
+Solution Idea Contract
+going to be a hash set of integer Pairs and then we are going to do the
+first call to DFS with the starting cell
+being what we are calling z z and the direction as we are given in the problem
+specification is up so this is basically X this is y and this is Direction and
+this is our robot and as you can see in the outer wrapper rrc main the only
+input we have is the robot the discovery of the grid the cleaning of the grid everything has to be done bya robot
+commands so this is our seed call and the main function the main DFS function
+that we are concerned with is the one here this one
+so it has five inputs the robot the initial ID the ID of the cell that the
+robot is currently in which is XY and the current direction the robot is
+facing which is De and the visited set okay so that's the function header what
+is the contract the robot is on the cell XY facing Direction
+di cell XY is dirty and free I'm going to add that
+bit uh and
+free the job for this particular call to rrc is
+to clean all the dirty cells that are unvisited reachable from XY all the
+dirty cells that can dirty and free cells that can be reached from
+XY without hitting an a visited cell and if you're if you this is the first time
+you are hearing this term which you know I made it up so you probably are
+unless you've watched my DFS uh deconstructed video then don't worry about it it is just uh a slight it is
+just a slight nitp pick on the contract okay so the unvisited reachable
+means all the cells that are reachable from XY via unvisited cells only okay
+when you're all done leave the robot in the cell XY facing Direction di this
+is the big bit leave the robot facing the same direction and face in the same
+cell cells with obstacles are non-existent a dirty cell by definition
+exists okay that's just a little definition okay so this is our contract
+and this is our function header if you have so going back to this
+for a minute at this point we are ready to write The Code by the way we could jump in and write the code in a few
+minutes now we have all the setup we have the outside wrapper we have the
+function header we have the contract we have how to mirror the DFS moves we know
+how to iterate over the four neighbors we know how to compute the neighbor we are facing and we know our setup for
+direction tracking and the unique ID for each cell so we're ready but if you're new to the problem
+and this problem is highly clever and highly nuanced on the surface if you look at
+just the story of this solution it's a pretty pedestrian application of DFS but
+the actual implementation of it is extremely nuanced and cl ever and that might not come across if you are
+learning this problem from some other source where someone is just giving you
+the code the code is really simple in the end or if someone is just explaining the various steps of the algorithm I
+have heard from people about this problem saying that the code looks so simple and I do know
+DFS but I'm having a hard time feeling confident that I truly do understand
+this solution and what I would say if you're feeling the same is that you are having an appropriate response to the
+reality in front of you this is highly nuanced and a highly clever setup okay
+so if this is the first time you looking at this problem and you are at this point where you've done the setup you've
+have the function header you have the contract you might want to just take a pause and
+hand execute the DFS as you intend now with all the
+Example Walkthrough
+direction and neighbor setup on an actual example before you jump into the
+code if you want to do that I do have something here in the slides for you to
+do that you can pause and try to execute DFS on an actual example so
+what is going on here we have the input grid right here this is your input grid
+it is a 3X3 grid four of the cells have obstacles and six um one two five cells
+are five cells are free okay 0 0 0 1 0ga
+1 1 negative 1 and one Zer the robot is right now situated in the middle cell
+which we are according to our terminology of unique identifiers we are going to call that cell 0 0 and the
+robot is facing up okay so that's this part 0 0 and the initial facing
+Direction I have put a black outline around that direction so if your initial
+direction is up and you can look at this table underneath which tells you if your
+initial direction is up you are going to visit the Neighbors in the following sequence you're going to first visit the
+up neighbor then the right neighbor and then the down neighbor and then the L neighbor and that's the urdl here okay
+up right down left if your initial Direction was right then you would go
+right down left and up right so it just goes in a cycle with those four directions so I've just put this table
+here to help do the Hand by hand execution so the starting point is XY is
+0 0 and the direction is up and we are going to do urd out so let's go up first
+so going to do that with a different color so you are going to try the up neighbor first so you're going to go to
+one Z right and this is going to be the first step of DFS now you are at 1 Z and
+you're facing the direction up you're always facing the direction from which you came right this up is related to
+this up again this is going to try and navigate The Neighbors now we are at one
+Zer here okay maybe do a different color here we are at 1 0 we were at 0 0 now
+we're at 1 0 from 1 0 because it's currently facing up we'll first try up
+that's outside doesn't exist so that won't work then we are going to try
+right so as you can see one Z's right is 1 one which is has an obstacle so that
+move won't succeed and then we are going to try down which is your collar 0 0
+right that's not going to work either and eventually we are going to call left
+which is one something is wrong ah okay let me
+fix this just one second so this is not 1
+Z this is uh 1 1 my bad
+okay so that now you're at 1 1 on account of going left from one Zer right
+so that makes set the second move that you're going to
+make from 1 0 you go to 1 1 and the robot is facing left and that's why the
+left here is um circled with the block so so
+hopefully you understand this kind of weird system I'm following from here you will go to 01 and from 0 1 0 negative 1
+sorry from 0 negative 1 you're going to return to 1 negative 1 from there you're going to return to 1 Z from there you're
+going to return to 0 and then you're going to go to 01 so I highly recommend
+that if you are fairly new to this problem or if you are having trouble
+feeling solidly situated with it at this point this will be very helpful doing
+this hand solving and then going back to the setup then attempting to write the
+code so here's the final result of the hand execution I've just made the slide
+for you to go over if you end up doing this and I've also uh drawn up the DFS
+tree so every DFS execution over a graph imposes
+a DFS Tree on it which can be really useful to look at so I've put the DFS tree here so this is some DFS lingo okay
+Example Walkthrough - End Result
+so moving on now we're ready to write the code so at this point I would recommend that you pause and try to
+write the code yourself we have everything in place at this point to write the code
+okay here we go there it is so this part I'm not going to go over we've already
+gone over this the part I'm highlighting right now this is the outer
+wrapper which initializes visited and then starts the root call and this is
+Code
+our sub routine that we talked about earlier that computes the neighbor that the robot is facing okay so let's come
+come back to the main code input the
+robot different color just as I'm going through this okay so the input is the
+robot XY the current position the current direction and the visited data
+set okay first thing to do is clean this cell right you never call DFS on a cell
+if it has already been cleaned that is the entire role of visited so we can
+confidently clean this cell we've never called DFS on it before so the first order of business is to clean the cell
+next we Market visited so we take our visited data structure and add xy2 it
+set the current direction to the current direction di then basically we do what we talked
+about before four times right so first we compute the next neighbor the the
+facing neighbor what is the neighbor that I'm facing we have the sub routine
+then we're going to try and recurse on that neighbor but before we recurse we are going to check if it is already
+visited if it's already visited we don't go inside this if Loop
+business if it is not visited which means it's not in our visited hash set
+then we attempt to move move to it that might also fail if it has an
+obstacle or if it is a non-existent cell outside of the grid then the move will
+fail so these are two reasons to not recurse on a cell either we've already done it or the cell doesn't exist or the
+cell has an obstacle so this if Loop covers all those conditions and say none of that is true which means it doesn't
+exist inv visited and the move succeeded when the move succeeds you are already
+at that cell so this is the big recursion okay now you
+recurse on that cell so as you can see you have given it the
+ID of the neighbor you're facing next X and next Y and you've given it the
+direction it's currently facing the move is not going to change its direction and you're giving it the visited data set
+that now includes XY because we did that above here okay so now it does the
+recursion and if it follows the contract here is where you take the leap of faith of recursion and assume that it'll do
+everything right that means when it's done the robot is in next X next Y and
+it is facing current okay so to reliably bring it back we do the 180° turn then we do the
+move back to the collar and now this is the part that we didn't talk about
+earlier reposition it okay so let me draw this out a little
+bit here so if this is cell a and this is cell b the robot was
+facing this direction and then it went to B okay and then at B it was facing this
+direction it did its business at B now the business is completely done then we
+turned it 180° meaning now the robot looks like this then we did the move
+okay now the robot looks like this but when we called it before we
+went to be the robot looked like this remember and in order for us to iterate
+over our four neighbors we need to reposition it exactly where it was we can take a right turn from here we need
+to take sorry take it back I take it back okay
+we we can do a right turn from here okay that's going to make it face
+up we are on this sequence up here four four times needs to proceed
+properly so we need to remove all evidence that we went to this neighbor
+okay so then we need to reposition it to current direction which would be of
+course just another 180° so now we've done the whole 360 and it's back to where it was okay going to remove
+this so hopefully that's clear that why these two let me me highlight them why these
+two are needed okay these two are needed to make this entire business that
+happened inside this if Loop to be a no op whether it happened or not once you're outside the if Loop the robot is
+in next X next y facing current Direction so now you can reliably turn it right and now it's facing the next
+neighbor okay this is how you can reliably face all four neighbors and not miss a neighbor by repeat a neighbor and
+stuff like that so now it's simple like we talked about before or turn the robot to the right it's facing the next
+neighbor and update the current Direction so now we're ready to execute
+the loop again and that's it my friends that's the DFS solution to the robot room cleaner problem now as you can tell
+it looks really simple yes but it's highly clever highly nuanced code so
+I if you're feeling some discomfort or if you're feeling like whoo these
+concepts are sort of mixing in my head take some time revisit it
+tomorrow you know the discomfort that you're feeling it belongs this is a slightly trippy problem okay and it
+doesn't come across so I hope I've made that case and I hope I have deepened
+your familiarity with depth first search you I have deepened a little bit of your familiarity with robot room cleaner type
+problems and depth for search on grids so what next
+well analysis plus is this the best that we can do you know that's something we
+always ask an algorithm design so let's go over the analysis it's actually Tricky Tricky Tricky so move at least it
+is for me okay I found or maybe I find it marvelously tricky and I really
+Relish in it so tricky in a good way so the let's look at how many times the
+Analysis
+robot does all the different all the three actions so now the first one is move how many times in our
+algorithm the robot how many times is it going to move if you look at successful moves the moves that are actually going
+to happen that's going to be two roughly two per cell to be honest it's going to be 2 *
+Kus 1 if um so I'm going to write this 2 k- 1 if K is the number of free cells so
+if you're interested in digging deeper into this then this is how many successful moves we are going to have
+now there will be up to three per node failed attempts right um so
+that's we depends on the problem depends on if you are solving this in in a real
+life situation at work then you got to find out what is you know are unsuccessful moves just as expensive as
+successful ones but hopefully this analysis will help um um put all those pieces together and then make a call
+clean clean we are sitting pretty okay we're cleaning every free cell exactly
+once when DFS is called on that cell we never call DFS on a cell twice visited ensures that then how many
+right turns this is a little bit tricky I know we said right turns are not that big a deal make as many as you like but
+it's still good to know how many we're making so i' say roughly eight eight
+right turns per call in the worst case four are to iterate over the four
+neighbors the ones that are outside the if Loop and then there are four inside
+the if Loop um that we are counting along with the DFS call so for each DFS
+before DFS is called on me I'm a cell my caller had to do the
+180° move and then 180° so those four right turns are just there to facilitate
+moving to me and then me returning back returning the robot back to the caller so that's four per call and then four
+per call to iterate over the four neighbor so that's eight right turns per call so that's kind of where we are in
+terms of analysis now is this the best that we can do
+H well best how are depends on what we
+mean by best are we trying to optimize the moves the clean commands or right turns or all of it
+so one uh let's say moves okay so let's do moves
+um for now we're already doing the optimum business in terms of clean and
+um ignoring the right turn cost for now let's say can is is is our
+algorithm making the least possible number of Moves In order to clean all the free cells well no because you can
+see in this example on your on the left DFS is going to let's say if it goes
+from A to B uh right and a to b b let just let's
+just say you know okay even if we do DFS in this sequence a b e c d it's going to
+come back all the way to a which is really frankly not needed in this case
+because a b e c d that sequence is our entire graph there's nothing left um so
+the optimal number of moves for this will be move from A to B that's one B to e
+that's two e to C that's three C to D that's four so optimal number of moves
+will be just four moves I think if there are cave free cells the optimal number of moves will be just K minus one moves
+and DFS is definitely going to do 2 * K minus one so one way to look at it is
+it's not bad we are within a factor of two of the best possible number of
+moves um another thing we don't want to go too deep into this rabbit hole it's a
+fun one though I spent a few days there is that this problem the robot room cleaner problem it is
+a provably tricky problem if you want to
+optimize the moves otherwise know as NP complete problem so that should get make
+us feel a little better even better about our d solution because not
+only it's not just that the DFS does not produce the least number of moves for
+every input graph it's actually not that algorithm doesn't exist it's
+not possible unless P equals MP so we are within a factor of two for the
+theoreticians who study approximation algorithms is not that impressive they're probably working on something
+which is within a factor of 1.3 or something but hey we'll take two we are Engineers um so I would say DFS not bad
+not the best but since the best is provably tricky we can feel pretty good we can
+feel pretty good about our solution okay extensions in
+case you are where I was two weeks ago when I Was preparing these slides and I thought I was done but I thought you
+know let me see different extensions of this problem so if you are falling in
+love with the problem or if you really feel compelled to know it even better and deeper and more you can try these
+following extensions of the problem the first one is the simplest one what if the initial
+Extensions
+direction is unknown so remember we were told that the initial direction is facing up what if we weren't told what
+the initial Direction was so this is kind of interesting I think almost the same exact code would work you just call
+the initial Direction zero if it is left then we're calling left zero and our
+setup hopefully we can appreciate our setup even more now is very clever it's
+a highly nuanced setup um so and by the way I did not uh you know it's not I
+hope that you're not assuming that I took this problem and within 35 minutes
+the golden amount of time you're given in software engineering interviews I came up with this solution now I took my
+time to come up with this solution then I checked online then I dug deep into it and then I prepared this class
+so um you know if you want to test how well you know this
+solution then you can try to code up what happens if the initial direction is not
+known what I'm claiming is that you don't have to change anything it'll work
+as it is but you can test it you're welcome to test it with a few test cases I have not this is just my prediction
+okay second extension you have direct access to the grid um sometimes that can
+become a bit of a a bigger distraction
+than it is to this problems nuance and cleverness the biggest distraction is
+not the fact that we do not have direct access to the grid our unique identifier system I think took care of it pretty
+well so you'll be surprised to know that the code complexity is not going to change very much even if you have direct
+access to the grid even if you have the initial cell and direction to part of
+the input um so here's an extension for you to try direct access to the grid you
+have the initial cell ID you have the initial Direction and robot. move moves
+the robot to the cell it's facing if the cell is nonexistent or occupied the robot will die it'll break and die so
+because you have direct access to the grid do your your own homework and try not to move the robot to some place that
+doesn't exist or is occupied um and of course assume that the grid is 01 where zero is a free cell
+and one is an occupied cell okay third extension back to the initial problem
+the one we solved today no Cycles in the underline graph what
+then now that that's a that's a fun one because
+all of a sudden theoretically speaking we do not need
+visited right so if you have a a cell
+and you have its four neighbors right so let's say it's facing right uh when DFS
+starts on it so you can try to call DFS
+on the neighbor to your right then you're going to try to call DFS on the
+neighbor that's down then you're going to try and call
+the neighbor that's to your left but that's your caller because your initial Direction was right that means you came
+from the cell to your left right so you were here on this neighbor facing right
+the robot was facing right and that's how the DFS call got originated at this cell okay I hope this is not very
+confusing so let me draw that again so these are the two
+cells right A and B and if the DFS starts off on B with the robot facing
+right the point I'm making is that before it was on a facing right because
+that's how DFS that's how we are setting up our DFS calls that when you move your direction doesn't change right so that
+means the moment you know the initial Direction the robot is facing in B you
+know that a is B's parent not the neighbor above not the neighbor
+to the right not the neighbor down the neighbor that is 180° from your current Direction so if you can just make sure
+that you don't call your parent back because that could Pro you know lead to an infate Loop between a and b and that
+won't be because there's a cycle that will be just because the edges are not directed The just because this graph
+doesn't have Cycles it doesn't mean that it has clear parent child relationships so that would be the only
+thing we have to make sure of that if I don't call my caller so just skip the 100 after to
+right turn skip that neighbor skip your third neighbor and then you'll be fine you don't need visited them because if
+there are no Cycles you'll never attempt to visit a cell again and the code will look very simple I did take time to
+write that code so I'm just going to show it to you guys it's beautifully simple hopefully it doesn't have any
+bugs in it I didn't not actually test this so um as always if you find any
+bugs or anything please let me know I'll try to superimpose some sort of uh uh
+you know correction on top of the slides in the video but this is the code if the
+Code, cont’d
+underling graph does not have Cycles okay um so that was that's a fun extension to
+try it really helps us understand why we need visited and the last extension I
+just thought of it I would say an hour ago what if turning is expensive what if
+a right turn is really expensive and you can move as much as you want what then I
+don't know I don't know I think we're good for now you know there's such a thing as too much fun okay but I thought
+I would leave it there even I was done but with the problem when I came to that extension I was like
+ah maybe another month another year okay but that's a wrap over and out you guys
+uh we are done thank you and I'll see you in next class bye bye
+

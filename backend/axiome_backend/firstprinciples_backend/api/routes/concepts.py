@@ -81,6 +81,7 @@ async def receive_message(
     return {
         "status": "success",
         "explanation": final_state['final_output'],
+        "diagram": final_state['diagram'],
         "processing_time": time.time() - start_time,
     }
 

@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 
 const API_URL = "http://localhost:8000"; // TODO import from .env.local or .env.development
 
 interface ConceptData {
-  concept_name: string;
+  concept_name?: string;
   explanation: string;
-  mermaid_diagram?: string;
-  code_example?: string;
-  next_step_prompt?: string;
+  diagram?: string;
+  // code_example?: string;
+  // next_step_prompt?: string;
 }
 
-interface Message {
+export interface Message {
   id: string;
   type: 'user' | 'assistant';
   content: string;
@@ -20,10 +20,25 @@ interface Message {
   timestamp: Date;
 }
 
-const ChatInterface: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+interface ChatInterfaceProps {
+  messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  inputValue: string;
+  setInputValue: (value: string) => void;
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
+  onDiagram?: (diagram: string) => void;
+}
+
+const ChatInterface: React.FC<ChatInterfaceProps> = ({
+  messages,
+  setMessages,
+  inputValue,
+  setInputValue,
+  isLoading,
+  setIsLoading,
+  onDiagram
+}) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -67,12 +82,20 @@ const ChatInterface: React.FC = () => {
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
           type: 'assistant',
-          content: data.gemini_response.explanation,
-          conceptData: data.gemini_response,
+          content: data.explanation || "",
+          conceptData: {
+            explanation: data.explanation || "",
+            diagram: data.diagram || ""
+          },
           timestamp: new Date()
         };
 
         setMessages(prev => [...prev, assistantMessage]);
+
+        // Route diagram to parent TextInterface
+        if (data.diagram) {
+          onDiagram?.(data.diagram);
+        }
       } else {
         const errorMessage: Message = {
           id: (Date.now() + 1).toString(),
@@ -159,25 +182,63 @@ const ChatInterface: React.FC = () => {
                 </div>
               ) : (
                 <div>
-                  {message.conceptData && (
+                  {message.conceptData ? (
+                    <>
+                      {message.conceptData.concept_name && (
+                        <div style={{
+                          fontWeight: "600",
+                          fontSize: "18px",
+                          marginBottom: "12px",
+                          color: "#1a202c",
+                          borderBottom: "1px solid #e2e8f0",
+                          paddingBottom: "8px"
+                        }}>
+                          {message.conceptData.concept_name}
+                        </div>
+                      )}
+
+                      <div style={{
+                        fontSize: "15px",
+                        lineHeight: "1.6",
+                        whiteSpace: "pre-wrap",
+                        color: "#2d3748"
+                      }}>
+                        {message.conceptData.explanation || message.content}
+                      </div>
+
+                      {message.conceptData.diagram && (
+                        <div style={{ marginTop: "12px" }}>
+                          <div style={{
+                            fontSize: "13px",
+                            color: "#4a5568",
+                            fontWeight: "600",
+                            marginBottom: "6px"
+                          }}>
+                            Diagram (Mermaid)
+                          </div>
+                          <pre style={{
+                            backgroundColor: "#f7fafc",
+                            border: "1px solid #e2e8f0",
+                            padding: "12px",
+                            borderRadius: "8px",
+                            overflowX: "auto",
+                            fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Consolas, monospace",
+                            whiteSpace: "pre"
+                          }}>
+                            {message.conceptData.diagram}
+                          </pre>
+                        </div>
+                      )}
+                    </>
+                  ) : (
                     <div style={{
-                      fontWeight: "600",
-                      fontSize: "18px",
-                      marginBottom: "12px",
-                      color: "#1a202c",
-                      borderBottom: "1px solid #e2e8f0",
-                      paddingBottom: "8px"
+                      fontSize: "15px",
+                      lineHeight: "1.6",
+                      whiteSpace: "pre-wrap"
                     }}>
-                      {message.conceptData.concept_name}
+                      {message.content}
                     </div>
                   )}
-                  <div style={{
-                    fontSize: "15px",
-                    lineHeight: "1.6",
-                    whiteSpace: "pre-wrap"
-                  }}>
-                    {message.content}
-                  </div>
                 </div>
               )}
             </div>

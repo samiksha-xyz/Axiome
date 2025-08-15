@@ -26,7 +26,7 @@ async def plan_lesson(state: LessonState) -> LessonState:
     * Key definitions (2-3 bullet points)
     * Specific learning objectives (1-3 bullet points)
     * Example plan (plan a simple example pulled from the context - 3-5 sentences).
-    Create a detailed lesson plan for the topic: {topic}.
+    Create a detailed lesson plan for the topic, it should be a creative idea to help create first principles knowledge: {topic}.
     Use the following context to guide your plan: {context} 
     """
 
@@ -68,8 +68,9 @@ async def generate_example(state: LessonState) -> LessonState:
     topic = state['topic']
     lesson_plan = state['lesson_plan']
 
-    prompt = f"""Create a detailed, step-by-step walkthrough example for the topic '{topic}'. 
-    Use an engaging and informative tone. Use maximum size of n = 5 for the input in your example.
+    prompt = f"""Create a creative, step-by-step walkthrough example for the topic '{topic}'. 
+    Use an engaging and informative tone. Don't dive too deep into the technical details, but provide enough context for developers to understand the key concepts.
+    The example should be simple and relatable, using a maximum of 5 nodes in a graph.
     Follow the guide laid out by the lesson plan to make the example clear and comprehensive.\n\nLESSON PLAN:\n{lesson_plan}"""
     
     response = await llm.ainvoke(prompt)
