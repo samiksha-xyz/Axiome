@@ -70,7 +70,7 @@ async def generate_example(state: LessonState) -> LessonState:
 
     prompt = f"""Create a creative, step-by-step walkthrough example for the topic '{topic}'. 
     Use an engaging and informative tone. Don't dive too deep into the technical details, but provide enough context for developers to understand the key concepts.
-    The example should be simple and relatable, using a maximum of 5 nodes in a graph.
+    The example should be simple and relatable, using a maximum of 6 nodes in a graph.
     Follow the guide laid out by the lesson plan to make the example clear and comprehensive.\n\nLESSON PLAN:\n{lesson_plan}"""
     
     response = await llm.ainvoke(prompt)
@@ -117,32 +117,24 @@ async def consolidate(state: LessonState) -> LessonState:
 
     topic = state['topic']
     lesson_plan = state['lesson_plan']
-    research_notes = state['research_notes'] if 'research_notes' in state else "No research generated."
+    # research_notes = state['research_notes'] if 'research_notes' in state else "No research generated."
     example = state['example']
-    diagram = state['diagram']
+    # diagram = state['diagram']
     
     prompt = f"""
     Consolidate the following components into a single, coherent markdown document for a lesson about '{topic}'.
 
     Organize the output with the following sections:
-    1.  **Lesson Overview**: Use the lesson plan.
-    2.  **Additional Insights**: Use the research notes.
-    3.  **Step-by-Step Example**: Use the example walkthrough.
-    4.  **Visual Diagram**: Embed the adjacency list here.
+    1.  **Lesson Overview**: Use the lesson plan. This should be a brief introduction to the topic, you can shorten it to 1-2 sentences.
+    2.  **Step-by-Step Example**: Use the example walkthrough.
 
     Here is the content:
 
     ## Lesson Plan
     {lesson_plan}
 
-    ## Research Notes
-    {research_notes}
-
     ## Walkthrough Example
     {example}
-
-    ## Diagram
-    {diagram}
     """
     
     response = await llm.ainvoke(prompt)

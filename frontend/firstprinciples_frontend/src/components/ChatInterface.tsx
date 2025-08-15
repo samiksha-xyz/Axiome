@@ -206,7 +206,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                         {message.conceptData.explanation || message.content}
                       </div>
 
-                      {message.conceptData.diagram && (
+                      {/* {message.conceptData.diagram && (
                         <div style={{ marginTop: "12px" }}>
                           <div style={{
                             fontSize: "13px",
@@ -228,7 +228,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                             {message.conceptData.diagram}
                           </pre>
                         </div>
-                      )}
+                      )} */}
                     </>
                   ) : (
                     <div style={{
