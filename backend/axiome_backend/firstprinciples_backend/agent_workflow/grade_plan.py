@@ -19,7 +19,7 @@ class GradeLesson(BaseModel):
 
 #TODO: Choose imported model based on config
 grader_model = init_chat_model(
-    "google_genai:gemini-2.5-flash", temperature=0
+    "google_genai:gemini-2.5-flash-lite", temperature=0
 )
 
 

@@ -6,6 +6,10 @@ llm = init_chat_model(
     "google_genai:gemini-2.5-flash", temperature=0
 )
 
+fast_llm = init_chat_model(
+    "google_genai:gemini-2.5-flash-lite", temperature=0
+)
+
 async def plan_lesson(state: LessonState) -> LessonState:
     """
     Generates a detailed lesson plan based on the initial topic.
@@ -88,20 +92,49 @@ async def generate_diagram(state: LessonState) -> LessonState:
     # TODO: Error handling for missing state keys
     example = state['example']
 
-    prompt = f"""Extract the adjacency list from the graph used in the following example. 
-    Use the following format:
+    # test_prompt = f"""You are a graph generator. Your task is to produce an adjacency list for a random undirected graph.
+
+    # ### Constraints:
+    # - Each node should be listed once in the adjacency list.
+    # - No self-loops are allowed.
+    # - No duplicate edges (if A is connected to B, then B should also list A, and it should not be listed again).
+
+    # ### Output Format:
+    # A: <comma-separated list of connected nodes>
+    # B: <comma-separated list of connected nodes>
+    # ...
+
+    # ### Example Output:
+    # A: B, C, D
+    # B: A, E
+    # C: A
+    # D: A, E
+    # E: B, D
+    # """
+    # TODO: change order of diagram generation to be before example generation
+
+
+    prompt = f"""Extract the adjacency list from the graph used in the following example walkthrough.
+    Do not include any additional text, only provide the adjacency list. 
+    
+    ### Output Format:
+    A: <comma-separated list of connected nodes>
+    B: <comma-separated list of connected nodes>
+    ...
+
+    ### Example Output:
     A: B, C, D
     B: A, E
     C: A
     D: A, E
     E: B, D
     
-    EXAMPLE:
+    ### Example Walkthrough to Extract From:
     {example}
     """
 
     # TODO: Structured output for diagram generation
-    response = await llm.ainvoke(prompt)
+    response = await fast_llm.ainvoke(prompt)
     state['diagram'] = response.content
 
     print("Diagram Generated.")
@@ -137,7 +170,7 @@ async def consolidate(state: LessonState) -> LessonState:
     {example}
     """
     
-    response = await llm.ainvoke(prompt)
+    response = await fast_llm.ainvoke(prompt)
     
     state['final_output'] = response.content
     print("Consolidation Complete.")
