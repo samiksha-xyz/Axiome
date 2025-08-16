@@ -1,13 +1,15 @@
-from langgraph.graph import START, END, StateGraph
-from .lesson_state import LessonState
+from langgraph.graph import END, START, StateGraph
+
 from .grade_plan import grade_plan
 from .graph_nodes import (
+    consolidate,
+    generate_diagram,
+    generate_example,
     plan_lesson,
     research,
-    generate_example,
-    generate_diagram,
-    consolidate
 )
+from .lesson_state import LessonState
+
 
 def build_graph():
     """

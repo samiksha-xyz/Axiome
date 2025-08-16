@@ -1,4 +1,5 @@
-from typing import TypedDict, Optional #, List
+from typing import Optional, TypedDict  # , List
+
 
 class LessonState(TypedDict):
     """
@@ -8,7 +9,7 @@ class LessonState(TypedDict):
      - topic: The provided topic for the lesson.
      - lesson_plan: The detailed lesson plan.
      - research_notes: Optional additional research notes about the topic.
-     - example: A walkthrough example of the main concept. 
+     - example: A walkthrough example of the main concept.
      - diagram: An adjacency list visualizing the concept.
      - final_output: The consolidated, final markdown output.
     """
@@ -18,5 +19,5 @@ class LessonState(TypedDict):
     lesson_plan: str
     research_notes: Optional[str]
     example: str
-    diagram: str #Dict[str, List[str]]?
+    diagram: str  # Dict[str, List[str]]?
     final_output: str

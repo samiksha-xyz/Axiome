@@ -199,37 +199,52 @@ def process_and_embed_document(
 
 
 if __name__ == "__main__":
-    # Fill in the document URL, collection name, and metadata
-    DOC_TO_CONVERT = "./docs/dfs_example.txt"
-    #Video: "https://www.youtube.com/watch?v=A6USyp46MZI"
+    import argparse
+    import os
+    import sys
 
-    COLLECTION_NAME = "first_principles"
-    METADATA = {"source": "Robot Room Cleaner DFS Solution", "topic": "DFS Example"}
+    parser = argparse.ArgumentParser(
+        description="Convert a document to markdown and embed chunks into a Qdrant collection."
+    )
+    parser.add_argument("input_path", help="Path to document to convert (e.g. docs/dfs.txt)")
+    parser.add_argument("-c", "--collection", default="first_principles", help="Qdrant collection name")
+    # parser.add_argument("--source", default="Robot Room Cleaner DFS Solution", help="metadata source")
+    # parser.add_argument("--topic", default="DFS Example", help="metadata topic")
+    parser.add_argument("--host", default=QDRANT_HOST, help="Qdrant host")
+    parser.add_argument("--port", type=int, default=QDRANT_PORT, help="Qdrant port")
+    args = parser.parse_args()
 
-    # Convert document to markdown
+    DOC_TO_CONVERT = args.input_path
+    COLLECTION_NAME = args.collection
+    # METADATA = {"source": args.source, "topic": args.topic}
+
+    if not os.path.exists(DOC_TO_CONVERT):
+        print(f"Error: input file not found: {DOC_TO_CONVERT}", file=sys.stderr)
+        sys.exit(2)
+
     print("Starting MarkItDown...")
     md = MarkItDown()
-    print("Converting document to markdown...")
-    result = md.convert(DOC_TO_CONVERT)
+    print(f"Converting document to markdown: {DOC_TO_CONVERT}")
+    try:
+        result = md.convert(DOC_TO_CONVERT)
+    except Exception as e:
+        print(f"MarkItDown conversion failed: {e}", file=sys.stderr)
+        sys.exit(3)
 
-    # Create processor instance
-    processor = QdrantDocumentProcessor()
+    processor = QdrantDocumentProcessor(host=args.host, port=args.port)
 
-    # Process and embed the document
     print("Processing document...")
     point_ids = processor.process_and_embed_document(
          document=result.text_content,
          collection_name=COLLECTION_NAME,
-         metadata=METADATA
+        #  metadata=METADATA
     )
 
-    print(f"Inserted points with IDs: {point_ids[:3]}...")  # Show first 3 IDs
+    print(f"Inserted points with IDs: {point_ids[:3]}...")
 
-    # # Get collection info
     info = processor.get_collection_info(COLLECTION_NAME)
     print(f"Collection info: {info}")
-    
-    # # Example search
+
     print("\nSearching for 'backtracking'...")
     results = processor.search_similar_chunks(
          query="backtracking",

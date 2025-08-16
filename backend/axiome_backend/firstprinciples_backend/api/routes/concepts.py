@@ -1,17 +1,13 @@
 """API routes for concept-related endpoints."""
 
-import json
 import time
 
 from fastapi import APIRouter, Depends
-from google import genai
-from google.genai import types
 from pydantic import BaseModel
 
-from ...core.config import GEMINI_API_KEY, QDRANT_COLLECTION_NAME
-from ...core.dependencies import QdrantRetriever, get_qdrant_retriever
-
 from ...agent_workflow.build_graph import build_graph
+from ...core.config import QDRANT_COLLECTION_NAME
+from ...core.dependencies import QdrantRetriever, get_qdrant_retriever
 
 router = APIRouter(prefix="/api/concepts", tags=["concepts"])
 
@@ -73,15 +69,15 @@ async def receive_message(
             "error_type": type(e).__name__,
             "processing_time": time.time() - start_time,
         }
-    print(f"Final state reached")
+    print("Final state reached")
     print(final_state["final_output"])
 
-    #TODO: Reformat to fit frontend requirements
+    # TODO: Reformat to fit frontend requirements
 
     return {
         "status": "success",
-        "explanation": final_state['final_output'],
-        "diagram": final_state['diagram'],
+        "explanation": final_state["final_output"],
+        "diagram": final_state["diagram"],
         "processing_time": time.time() - start_time,
     }
 
