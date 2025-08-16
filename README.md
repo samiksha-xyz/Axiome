@@ -50,6 +50,14 @@ Finally, embed the two given documents into Qdrant:
 python qdrant_processor.py docs/dfs.txt
 python qdrant_processor.py docs/dfs_example.txt
 ```
+
+4. Set up environment variables
+Create a .env file in the backend directory. This project is currently configured to run the LangGraph backend using Google's Gemini API.  
+You can generate a Gemini API key at https://aistudio.google.com/app/apikey.
+Configure the .env file as follows:
+```bash
+GOOGLE_API_KEY="google_api_key_here"
+```
 ## Starting Development Environment
 
 ### Qdrant
