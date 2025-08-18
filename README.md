@@ -6,7 +6,7 @@ These instructions will get a copy of this project running on your local machine
 
 ### Requirements
 - Git configured locally
-- Python 3.8+ and Node.js 18+ installed
+- Python 3.9+ and Node.js 18+ installed
 - pip (which is included with most Python installations)
 - Docker Desktop installed
 - uv - you can install uv using pip:
