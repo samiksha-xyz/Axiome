@@ -255,3 +255,7 @@ poetry.lock
 
 # Local documentation and files not for version control
 local_docs/
+
+
+# Qdrant Files
+qdrant/qdrant_storage/

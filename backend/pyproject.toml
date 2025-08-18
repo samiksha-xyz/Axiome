@@ -6,8 +6,20 @@ authors = [
     {name = "Suhas Prakash", email = "suh4s@users.noreply.github.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.8"
-dependencies = []
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi[standard]>=0.115.14",
+    "fastembed>=0.7.1",
+    "google-genai>=1.23.0",
+    "langchain>=0.3.27",
+    "langchain-community>=0.3.27",
+    "langchain-core>=0.3.74",
+    "langchain-google-genai>=2.1.9",
+    "langgraph>=0.6.4",
+    "python-dotenv>=1.1.1",
+    "qdrant-client>=1.15.0",
+    "sentence-transformers>=5.0.0",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -33,17 +45,25 @@ python_functions = "test_*"
 
 [tool.black]
 line-length = 88
-target-version = ['py38']
+target-version = ['py39']
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py39"
 line-length = 88
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W"]
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 strict = false
 warn_return_any = true
 warn_unused_configs = true
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "mypy>=1.16.0",
+    "pytest>=8.4.0",
+    "ruff>=0.11.13",
+]
